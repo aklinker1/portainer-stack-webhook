@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.3
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.2...v0.1.3)
+
+### 🩹 Fixes
+
+- Print version on startup ([26c0797](https://github.com/aklinker1/portainer-stack-webhook/commit/26c0797))
+
 ## v0.1.2
 
 ### 🚀 Enhancements
