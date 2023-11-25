@@ -1,0 +1,50 @@
+name: Release
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+  release:
+    needs: 
+      - validate
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v1
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          git config user.email "github-actions@users.noreply.github.com"
+          git config user.name "GitHub Actions"
+          bunx changelogen@latest --release
+          git push
+          git push --tags
+
+          VERSION=$(jq -r .version package.json)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: aklinker1/portainer-stack-webhook
+          tags: |
+            type=semver,pattern={{major}},value=${{ steps.changelog.outputs.version }},enable=${{ !startsWith(steps.changelog.outputs.version, '0.') }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.changelog.outputs.version }}
+            type=semver,pattern={{version}},value=${{ steps.changelog.outputs.version }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: GitHub Release
+        run: pnpx changelogen@latest gh release --token ${{ secrets.GITHUB_TOKEN }}
