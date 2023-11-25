@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "bun --hot src/index.ts",
     "start": "bun src/index.ts",
+    "format:check": "echo TODO",
+    "lint:check": "echo TODO",
+    "compile": "tsc",
     "docker:build": "docker build . -t aklinker1/portainer-stack-webhook",
     "docker:build:arm64": "bun docker:build --platform linux/arm64",
     "docker:build:amd64": "bun docker:build --platform linux/amd64",
