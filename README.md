@@ -45,7 +45,6 @@ To run:
 1. Copy the `.env.template` to `.env` and fill it out with your portainer instance's info:
    ```sh
    cp .env.template .env
-   bun dev
    ```
 2. Start the server
    ```sh
@@ -56,4 +55,8 @@ To run:
    curl -X POST http://localhost:3000/api/webhook/stacks/123
    ```
 
-> I have not setup tests yet, this is a very simple server, so just test changes manually or contribute and add some tests!
+You can also run tests:
+
+```sh
+bun test
+```
