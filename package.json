@@ -1,0 +1,21 @@
+{
+  "name": "portainer-stack-webhooks",
+  "version": "0.1.0",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot src/index.ts",
+    "start": "bun src/index.ts",
+    "docker:build": "docker build . -t aklinker1/portainer-stack-webhook",
+    "docker:build:arm64": "bun docker:build --platform linux/arm64",
+    "docker:build:amd64": "bun docker:build --platform linux/amd64",
+    "docker:run": "docker run -p 3000:3000 -it --rm --init aklinker1/portainer-stack-webhook",
+    "docker:push": "docker push aklinker1/portainer-stack-webhook"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

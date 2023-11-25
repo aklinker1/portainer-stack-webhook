@@ -1,0 +1,16 @@
+import { mock } from "bun:test";
+import { PortainerApi } from "./portainer";
+
+export function mockPortainerApi() {
+  return {
+    getStack: mock<PortainerApi["getStack"]>(() => {
+      throw Error("Not implemented");
+    }),
+    getStackFile: mock<PortainerApi["getStackFile"]>(() => {
+      throw Error("Not implemented");
+    }),
+    updateStack: mock<PortainerApi["updateStack"]>(() => {
+      throw Error("Not implemented");
+    }),
+  };
+}
