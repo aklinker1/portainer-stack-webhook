@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.6
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.5...v0.1.6)
+
+### 🩹 Fixes
+
+- Move `package.json` to correct location relative to `src/index.ts` ([4f4f1b2](https://github.com/aklinker1/portainer-stack-webhook/commit/4f4f1b2))
+
 ## v0.1.5
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.4...v0.1.5)
