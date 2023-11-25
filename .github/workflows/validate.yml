@@ -14,10 +14,6 @@ jobs:
       - uses: oven-sh/setup-bun@v1
       - run: bun install
       - run: bun test
-        env:
-          BASE_URL: http://localhost/api
-          USERNAME: username
-          PASSWORD: password
   lint:
     runs-on: ubuntu-22.04
     steps:
