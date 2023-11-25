@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.1.5
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.4...v0.1.5)
+
+### 🩹 Fixes
+
+- Include `package.json` in docker image ([6878d9f](https://github.com/aklinker1/portainer-stack-webhook/commit/6878d9f))
+
+### 🏡 Chore
+
+- Remove unused import ([002044c](https://github.com/aklinker1/portainer-stack-webhook/commit/002044c))
+
 ## v0.1.4
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.3...v0.1.4)
