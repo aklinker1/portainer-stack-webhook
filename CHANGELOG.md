@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.1.7
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.6...v0.1.7)
+
+### 🩹 Fixes
+
+- Don't prune unused services ([a6d70c3](https://github.com/aklinker1/portainer-stack-webhook/commit/a6d70c3))
+- 404 from `GET /api/stacks` ([130a53b](https://github.com/aklinker1/portainer-stack-webhook/commit/130a53b))
+- Correct error message typo ([a0faea5](https://github.com/aklinker1/portainer-stack-webhook/commit/a0faea5))
+
 ## v0.1.6
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.5...v0.1.6)
