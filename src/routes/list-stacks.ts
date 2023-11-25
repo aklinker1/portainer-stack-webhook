@@ -4,7 +4,7 @@ import { defineRoute } from "../utils/routes";
 export default defineRoute({
   name: "list-stacks",
   method: "GET",
-  regex: /$\/api\/stacks\/?^/,
+  regex: /^\/api\/stacks\/?$/,
   async handler(ctx) {
     const stacks = (await ctx.portainer.listStacks()).map((stack) => ({
       id: stack.Id,
