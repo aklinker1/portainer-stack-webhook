@@ -11,11 +11,9 @@ export function startServer(options: {
   return Bun.serve({
     port: options.port,
     async fetch(request) {
-      console.log("STARTED");
       try {
         const url = new URL(request.url, "http://localhost");
         for (const route of options.routes) {
-          console.log("-", route.name);
           const matches = route.regex.exec(url.pathname);
           if (matches && route.method === request.method) {
             const ctx: Ctx = {
@@ -40,7 +38,6 @@ export function startServer(options: {
           { routes: available }
         );
       } catch (err) {
-        console.log(err);
         // Return responses for handled errors
         if (err instanceof ApiError) return err.toResponse();
         if (err instanceof FetchError) return err.toResponse();
@@ -48,9 +45,6 @@ export function startServer(options: {
         // Throw error on unknown errors
         throw err;
       }
-    },
-    error(err) {
-      console.error(err);
     },
   });
 }
