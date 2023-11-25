@@ -6,7 +6,7 @@ import { mockPortainerApi } from "./testing";
 const mockHandler = mock<Route["handler"]>(() => {});
 
 const server = startServer({
-  port: 123,
+  port: 1092,
   routes: [
     defineRoute({
       name: "test",
