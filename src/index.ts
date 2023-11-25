@@ -1,4 +1,4 @@
-import { blue, bold, cyan, dim, violet } from "./utils/colors";
+import { bold, cyan, dim, violet } from "./utils/colors";
 import routes from "./routes";
 import { createPortainerApi } from "./utils/portainer";
 import { startServer } from "./utils/server";
