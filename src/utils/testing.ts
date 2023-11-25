@@ -3,6 +3,9 @@ import { PortainerApi } from "./portainer";
 
 export function mockPortainerApi() {
   return {
+    listStacks: mock<PortainerApi["listStacks"]>(() => {
+      throw Error("Not implemented");
+    }),
     getStack: mock<PortainerApi["getStack"]>(() => {
       throw Error("Not implemented");
     }),

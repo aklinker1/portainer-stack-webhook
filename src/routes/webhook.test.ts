@@ -37,6 +37,7 @@ describe("webhook route", () => {
     portainer.getStack.mockResolvedValue({
       Id: id,
       EndpointId: endpointId,
+      Name: "Example Stack",
     });
     portainer.getStackFile.mockResolvedValue({
       StackFileContent: stackFileContent,
@@ -54,6 +55,7 @@ describe("webhook route", () => {
     portainer.getStack.mockResolvedValue({
       Id: id,
       EndpointId: endpointId,
+      Name: "Example Stack",
     });
     portainer.getStackFile.mockResolvedValue({
       StackFileContent: stackFileContent,

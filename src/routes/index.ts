@@ -1,3 +1,4 @@
 import webhook from "./webhook";
+import listStacks from "./list-stacks";
 
-export default [webhook];
+export default [listStacks, webhook];

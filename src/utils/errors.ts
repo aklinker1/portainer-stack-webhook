@@ -1,3 +1,5 @@
+import { JsonResponse } from "./responses";
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -16,20 +18,11 @@ export class ApiError extends Error {
     );
   }
 
-  get body() {
-    return JSON.stringify({
+  toResponse() {
+    return new JsonResponse(this.status, {
       message: this.message,
       ...this.details,
       stack: this.jsonStack,
-    });
-  }
-
-  toResponse() {
-    return new Response(this.body, {
-      status: this.status,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
   }
 }

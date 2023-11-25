@@ -8,6 +8,10 @@ export async function createPortainerApi() {
   const password = process.env.PASSWORD;
   if (!password) throw RequiredEnvError(`PASSWORD`);
 
+  const checkResponse = (response: Response, expectedStatus = 200) => {
+    if (response.status !== expectedStatus) throw new FetchError(response);
+  };
+
   const login = async (): Promise<PortainerLoginResponse> => {
     const res = await fetch(`${baseUrl}/auth`, {
       body: JSON.stringify({ username, password }),
@@ -26,12 +30,21 @@ export async function createPortainerApi() {
   };
 
   return {
+    async listStacks(): Promise<PortainerStack[]> {
+      const res = await fetch(`${baseUrl}/stacks`, {
+        headers: authHeaders,
+      });
+
+      checkResponse(res);
+      return await res.json<PortainerStack[]>();
+    },
+
     async getStack(id: number): Promise<PortainerStack> {
       const res = await fetch(`${baseUrl}/stacks/${id}`, {
         headers: authHeaders,
       });
 
-      if (res.status !== 200) throw new FetchError(res);
+      checkResponse(res);
       return await res.json<PortainerStack>();
     },
 
@@ -39,7 +52,8 @@ export async function createPortainerApi() {
       const res = await fetch(`${baseUrl}/stacks/${id}/file`, {
         headers: authHeaders,
       });
-      if (res.status !== 200) throw new FetchError(res);
+
+      checkResponse(res);
       return await res.json<PortainerStackFile>();
     },
 
@@ -68,7 +82,7 @@ export async function createPortainerApi() {
         },
       });
 
-      if (res.status !== 200) throw new FetchError(res);
+      checkResponse(res);
     },
   };
 }
@@ -79,6 +93,7 @@ export interface PortainerLoginResponse {
 
 export interface PortainerStack {
   Id: number;
+  Name: string;
   EndpointId: number;
 }
 
