@@ -13,7 +13,7 @@ export default defineRoute({
       ctx.portainer.getStackFile(id),
     ]);
     await ctx.portainer.updateStack(id, {
-      prune: true,
+      prune: false,
       pullImage: true,
       endpointId: stack.EndpointId,
       stackFileContent: stackFile.StackFileContent,

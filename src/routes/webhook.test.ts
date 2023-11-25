@@ -70,7 +70,7 @@ describe("webhook route", () => {
       {
         endpointId,
         stackFileContent,
-        prune: true,
+        prune: false,
         pullImage: true,
       },
     ]);
