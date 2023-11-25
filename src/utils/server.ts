@@ -34,7 +34,7 @@ export function startServer(options: {
         );
         throw new ApiError(
           404,
-          `"${request.method} ${url.pathname}" did not match an endpoints`,
+          `"${request.method} ${url.pathname}" did not match any endpoints`,
           { routes: available }
         );
       } catch (err) {
