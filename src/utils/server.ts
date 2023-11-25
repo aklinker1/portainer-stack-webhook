@@ -1,6 +1,6 @@
 import { Ctx } from "./context";
 import { ApiError, FetchError } from "./errors";
-import { PortainerApi, createPortainerApi } from "./portainer";
+import { PortainerApi } from "./portainer";
 import { Route } from "./routes";
 
 export function startServer(options: {
@@ -18,7 +18,7 @@ export function startServer(options: {
           if (matches && route.method === request.method) {
             const ctx: Ctx = {
               request,
-              portainer: await createPortainerApi(),
+              portainer: await options.createPortainerApi(),
             };
             const response = await route.handler(ctx, ...matches.slice(1));
             return response ?? new Response();
