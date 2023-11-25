@@ -20,5 +20,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "changelog": {
+    "excludeAuthors": [
+      "aaronklinker1@gmail.com"
+    ]
   }
 }

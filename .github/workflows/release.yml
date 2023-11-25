@@ -47,4 +47,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: GitHub Release
-        run: pnpx changelogen@latest gh release --token ${{ secrets.GITHUB_TOKEN }}
+        run: bunx changelogen@latest gh release --token ${{ secrets.GITHUB_TOKEN }}

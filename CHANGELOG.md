@@ -1,8 +1,6 @@
 # Changelog
 
-
 ## v0.1.1
-
 
 ### 🚀 Enhancements
 
@@ -17,9 +15,3 @@
 - Add validation workflow ([b31e624](https://github.com/aklinker1/portainer-stack-webhook/commit/b31e624))
 - Fix failing tests in CI ([#1](https://github.com/aklinker1/portainer-stack-webhook/pull/1))
 - Add release workflow ([c0c8546](https://github.com/aklinker1/portainer-stack-webhook/commit/c0c8546))
-
-### ❤️ Contributors
-
-- Aaron Klinker <aaronklinker1@gmail.com>
-- Aaron <aaronklinker1@gmail.com>
-
