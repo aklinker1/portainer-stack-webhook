@@ -25,12 +25,9 @@ To tell Portainer to pull the latest images and update the stack, make a simple 
 curl -X POST http://localhost:3000/api/webhook/stacks/:stackId
 ```
 
-> [!NOTE]
-> The `stackId` can be retrieved from the URL when visiting the stack details in Portainer. In the URL below, it would be `22` from the `id=22` query parameter.
->
-> ```
-> https://portainer.example.com/#!/1/docker/stacks/some_stack?id=22&type=1&regular=true&external=false&orphaned=false
-> ```
+You can get the `stackId` from the `GET /api/stacks` endpoint.
+
+For other available APIs, see `/scalar` for the API docs.
 
 ## Contributing
 

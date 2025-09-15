@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "bun@1.2.21",
   "scripts": {
-    "dev": "bun --hot src/index.ts",
+    "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
     "format:check": "echo TODO",
     "lint:check": "echo TODO",
@@ -16,15 +16,12 @@
     "docker:run": "docker run -p 3000:3000 -it --rm --init aklinker1/portainer-stack-webhook",
     "docker:push": "docker push aklinker1/portainer-stack-webhook"
   },
+  "dependencies": {
+    "@aklinker1/zeta": "^0.6.6",
+    "zod": "^4.1.8"
+  },
   "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
+    "bun-types": "latest",
     "typescript": "^5.0.0"
-  },
-  "changelog": {
-    "excludeAuthors": [
-      "aaronklinker1@gmail.com"
-    ]
   }
 }

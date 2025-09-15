@@ -1,19 +1,21 @@
-import { bold, cyan, dim, violet } from "./utils/colors";
-import routes from "./routes";
-import { createPortainerApi } from "./utils/portainer";
-import { startServer } from "./utils/server";
-import { version } from "../package.json";
+import { bold, cyan, dim, violet } from "./colors";
+import { version } from "./version";
+import { app } from "./app";
 
 const port = Number(process.env.PORT || 3000);
 
 console.log(`${bold(cyan("Portainer Stack Webhooks"))} ${dim("v" + version)}`);
-console.log(
-  `${cyan("ℹ")} Server started ${dim("→")} ${violet(
-    "http://localhost:" + port
-  )}`
-);
-startServer({
-  port,
-  createPortainerApi,
-  routes,
+
+app.listen(port, () => {
+  console.log(
+    `${cyan("ℹ")} Server started ${dim("→")} ${violet(
+      "http://localhost:" + port,
+    )}`,
+  );
 });
+
+if (process.env.NODE_ENV !== "production") {
+  const res = await fetch(`http://localhost:${port}/openapi.json`);
+  const json = await res.json();
+  Bun.write("openapi.json", JSON.stringify(json, null, 2));
+}

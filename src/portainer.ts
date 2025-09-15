@@ -1,15 +1,16 @@
-import { FetchError, RequiredEnvError } from "./errors";
+import { InternalServerErrorHttpError } from "@aklinker1/zeta";
 
 export async function createPortainerApi() {
   const baseUrl = process.env.BASE_URL;
-  if (!baseUrl) throw RequiredEnvError(`BASE_URL`);
+  if (!baseUrl) throw Error(`BASE_URL`);
   const username = process.env.USERNAME;
-  if (!username) throw RequiredEnvError(`USERNAME`);
+  if (!username) throw Error(`USERNAME`);
   const password = process.env.PASSWORD;
-  if (!password) throw RequiredEnvError(`PASSWORD`);
+  if (!password) throw Error(`PASSWORD`);
 
   const checkResponse = (response: Response, expectedStatus = 200) => {
-    if (response.status !== expectedStatus) throw new FetchError(response);
+    if (response.status !== expectedStatus)
+      throw new PortainerApiError(response);
   };
 
   const login = async (): Promise<PortainerLoginResponse> => {
@@ -20,7 +21,7 @@ export async function createPortainerApi() {
         "Content-Type": "application/json",
       },
     });
-    if (res.status !== 200) throw new FetchError(res);
+    if (res.status !== 200) throw new PortainerApiError(res);
     return await res.json<PortainerLoginResponse>();
   };
 
@@ -64,7 +65,7 @@ export async function createPortainerApi() {
         prune: boolean;
         pullImage: boolean;
         stackFileContent: string;
-      }
+      },
     ): Promise<void> {
       const updateUrl = new URL(`${baseUrl}/stacks/${id}`);
       updateUrl.searchParams.set("endpointId", String(options.endpointId));
@@ -102,3 +103,9 @@ export interface PortainerStackFile {
 }
 
 export type PortainerApi = Awaited<ReturnType<typeof createPortainerApi>>;
+
+export class PortainerApiError extends InternalServerErrorHttpError {
+  constructor(response: Response, options?: ErrorOptions) {
+    super("Request to Portainer API failed", { response }, options);
+  }
+}
