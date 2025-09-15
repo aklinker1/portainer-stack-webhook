@@ -5,11 +5,9 @@
   "type": "module",
   "packageManager": "bun@1.2.21",
   "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "start": "bun src/index.ts",
-    "format:check": "echo TODO",
-    "lint:check": "echo TODO",
-    "compile": "tsc",
+    "dev": "bun --watch src/dev.ts",
+    "check": "check",
+    "build": "bun build src/index.ts --target=bun --outfile=dist/index.js",
     "docker:build": "docker build . -t aklinker1/portainer-stack-webhook",
     "docker:build:arm64": "bun docker:build --platform linux/arm64",
     "docker:build:amd64": "bun docker:build --platform linux/amd64",
@@ -21,7 +19,9 @@
     "zod": "^4.1.8"
   },
   "devDependencies": {
+    "@aklinker1/check": "^2.1.0",
     "bun-types": "latest",
+    "oxlint": "^1.15.0",
     "typescript": "^5.0.0"
   }
 }
