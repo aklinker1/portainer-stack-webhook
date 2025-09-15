@@ -27,7 +27,7 @@ curl -X POST http://localhost:3000/api/webhook/stacks/:stackId
 
 You can get the `stackId` from the `GET /api/stacks` endpoint.
 
-For other available APIs, see `/scalar` for the API docs.
+For other available APIs, see `/scalar` or copy-paste [`./openapi.json`](./openapi.json) into [Scalar Editor](https://editor.scalar.com/)
 
 ## Contributing
 
