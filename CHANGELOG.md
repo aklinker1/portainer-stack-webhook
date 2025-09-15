@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.2.0
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.7...v0.2.0)
+
+### 🏡 Chore
+
+- Upgrade bun to 1.2.21 ([fdda0cf](https://github.com/aklinker1/portainer-stack-webhook/commit/fdda0cf))
+- Add missing lockfile ([c29fc68](https://github.com/aklinker1/portainer-stack-webhook/commit/c29fc68))
+- ⚠️  Refactor to use `@aklinker1/zeta` and provide API docs ([23d326e](https://github.com/aklinker1/portainer-stack-webhook/commit/23d326e))
+- Fix checks, add dev script ([0d1c38f](https://github.com/aklinker1/portainer-stack-webhook/commit/0d1c38f))
+- Fix lint ([511eccf](https://github.com/aklinker1/portainer-stack-webhook/commit/511eccf))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Refactor to use `@aklinker1/zeta` and provide API docs ([23d326e](https://github.com/aklinker1/portainer-stack-webhook/commit/23d326e))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](https://github.com/aklinker1))
+
 ## v0.1.7
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.6...v0.1.7)
