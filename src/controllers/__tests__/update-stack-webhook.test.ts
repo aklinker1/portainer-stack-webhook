@@ -8,10 +8,10 @@ const statusMock = mock(() => {
 });
 
 describe("POST /api/webhook/stacks", () => {
-  const testUpdateStackWebhook = (id: number) =>
+  const testUpdateStackWebhook = (stackId: number) =>
     updateStackWebhook({
       portainer,
-      query: { id },
+      params: { stackId },
       status: statusMock,
     });
 
@@ -23,23 +23,23 @@ describe("POST /api/webhook/stacks", () => {
   });
 
   it("should fail if the stack doesn't exist", async () => {
-    const id = 1;
+    const stackId = 123;
     const err = Error("Stack not found");
 
     portainer.getStack.mockRejectedValue(err);
     portainer.getStackFile.mockRejectedValue(err);
 
-    expect(testUpdateStackWebhook(id)).rejects.toBe(err);
+    expect(testUpdateStackWebhook(stackId)).rejects.toBe(err);
   });
 
   it("should fail if the update fails", async () => {
-    const id = 123;
+    const stackId = 123;
     const endpointId = 3;
     const stackFileContent = "<docker compose code>";
     const err = Error("Some error");
 
     portainer.getStack.mockResolvedValue({
-      Id: id,
+      Id: stackId,
       EndpointId: endpointId,
       Name: "Example Stack",
     });
@@ -48,16 +48,16 @@ describe("POST /api/webhook/stacks", () => {
     });
     portainer.updateStack.mockRejectedValue(err);
 
-    expect(testUpdateStackWebhook(id)).rejects.toBe(err);
+    expect(testUpdateStackWebhook(stackId)).rejects.toBe(err);
   });
 
   it("should update the stack, pulling the latest images", async () => {
-    const id = 123;
+    const stackId = 123;
     const endpointId = 3;
     const stackFileContent = "<docker compose code>";
 
     portainer.getStack.mockResolvedValue({
-      Id: id,
+      Id: stackId,
       EndpointId: endpointId,
       Name: "Example Stack",
     });
@@ -66,11 +66,11 @@ describe("POST /api/webhook/stacks", () => {
     });
     portainer.updateStack.mockResolvedValue();
 
-    await testUpdateStackWebhook(id);
+    await testUpdateStackWebhook(stackId);
 
     expect(portainer.updateStack.mock.calls).toHaveLength(1);
     expect(portainer.updateStack.mock.calls[0]).toEqual([
-      id,
+      stackId,
       {
         endpointId,
         stackFileContent,

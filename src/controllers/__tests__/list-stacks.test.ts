@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-import { ListStacksOutput, Stack } from "../../models";
+import { Stack } from "../../models";
 import { mockPortainerApi } from "../../utils/testing";
 import { listStacks } from "../list-stacks";
 
