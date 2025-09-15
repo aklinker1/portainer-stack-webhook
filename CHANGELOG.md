@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.2.1
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.0...v0.2.1)
+
+### 🏡 Chore
+
+- Fix mismatched casing ([2ccec88](https://github.com/aklinker1/portainer-stack-webhook/commit/2ccec88))
+- Fix dockerfile ([d6adbee](https://github.com/aklinker1/portainer-stack-webhook/commit/d6adbee))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](https://github.com/aklinker1))
+
 ## v0.2.0
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.1.7...v0.2.0)
