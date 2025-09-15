@@ -1,4 +1,4 @@
-FROM oven/bun:1 as base
+FROM oven/bun:1.2.21 as base
 WORKDIR /usr/src/app
 COPY package.json .
 COPY src src

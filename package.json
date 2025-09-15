@@ -3,6 +3,7 @@
   "version": "0.1.7",
   "module": "index.ts",
   "type": "module",
+  "packageManager": "bun@1.2.21",
   "scripts": {
     "dev": "bun --hot src/index.ts",
     "start": "bun src/index.ts",
