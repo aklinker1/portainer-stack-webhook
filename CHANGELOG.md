@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.2.2
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.1...v0.2.2)
+
+### 🚀 Enhancements
+
+- Support `X-API-Key` header authentication ([#6](https://github.com/aklinker1/portainer-stack-webhook/pull/6))
+
+### 🏡 Chore
+
+- Update docs link ([08a0011](https://github.com/aklinker1/portainer-stack-webhook/commit/08a0011))
+- Refactor for better type-safety and testability ([#3](https://github.com/aklinker1/portainer-stack-webhook/pull/3))
+- **ai:** Add `AGENTS.md` ([d2debe8](https://github.com/aklinker1/portainer-stack-webhook/commit/d2debe8))
+- Add prettier ([8e0ec7b](https://github.com/aklinker1/portainer-stack-webhook/commit/8e0ec7b))
+- Upgrade `@aklinker1/zeta` ([4cfd0f1](https://github.com/aklinker1/portainer-stack-webhook/commit/4cfd0f1))
+- Upgrade Bun to 1.3.1 ([e23827e](https://github.com/aklinker1/portainer-stack-webhook/commit/e23827e))
+- Upgrade `@aklinker1/zeta` to fix bug ([dfa4d61](https://github.com/aklinker1/portainer-stack-webhook/commit/dfa4d61))
+- Add `@aklinker1/zero-factory` and move around test utils ([#5](https://github.com/aklinker1/portainer-stack-webhook/pull/5))
+
+### 🤖 CI
+
+- Update workflow setup ([#4](https://github.com/aklinker1/portainer-stack-webhook/pull/4))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](https://github.com/aklinker1))
+
 ## v0.2.1
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.0...v0.2.1)
