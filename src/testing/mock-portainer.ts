@@ -1,7 +1,7 @@
 import { mock } from "bun:test";
 import { PortainerApi } from "../utils/portainer";
 
-export const mockPortainerApi = {
+export const mockPortainer = {
   listStacks: mock<PortainerApi["listStacks"]>(() => {
     throw Error("Not implemented");
   }),

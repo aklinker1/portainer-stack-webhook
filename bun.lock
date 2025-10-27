@@ -4,8 +4,9 @@
     "": {
       "name": "portainer-swarm-updater",
       "dependencies": {
+        "@aklinker1/zero-factory": "^1.1.4",
         "@aklinker1/zeta": "^1.1.1",
-        "zod": "^4.1.8",
+        "zod": "^4.1.12",
       },
       "devDependencies": {
         "@aklinker1/check": "^2.1.0",
@@ -18,6 +19,8 @@
   },
   "packages": {
     "@aklinker1/check": ["@aklinker1/check@2.1.0", "", { "dependencies": { "@antfu/utils": "^0.7.7", "ci-info": "^4.0.0", "citty": "^0.1.6" }, "bin": { "check": "bin/check.mjs" } }, "sha512-x+0vxb0vHV+6ZskcLYobI6FCAFG1jwVGgKuH9pTfHLW3vlzbGSGUKcxbCuMI3Q51WZS8oE4UfB+4v5M2+0uz1g=="],
+
+    "@aklinker1/zero-factory": ["@aklinker1/zero-factory@1.1.4", "", {}, "sha512-V6oNq73snF9hDZJSgvAGZcGT7106IBZOzs20r301iia6R4SlhUa9Vhz5+cD3MPv+7pfHEcXPSqzUNKq5Bc8UXw=="],
 
     "@aklinker1/zeta": ["@aklinker1/zeta@1.1.1", "", { "dependencies": { "@standard-schema/spec": "^1.0.0", "rou3": "^0.7.1" } }, "sha512-7LDU/o49tNcwHOsVqubeWKLlnilK14z1+WNHfx+ZSexy0vJr+ZZkcDM87WNdrPX3FswU8EpHv+o7TcT3+kInrg=="],
 
@@ -57,6 +60,6 @@
 
     "typescript": ["typescript@5.3.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-6l+RyNy7oAHDfxC4FzSJcz9vnjTKxrLpDG5M2Vu4SHRVNg6xzqZp6LYSR9zjqQTu8DU/f5xwxUdADOkbrIX2gQ=="],
 
-    "zod": ["zod@4.1.8", "", {}, "sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ=="],
+    "zod": ["zod@4.1.12", "", {}, "sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ=="],
   }
 }
