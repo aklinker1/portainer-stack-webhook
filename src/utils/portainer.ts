@@ -1,8 +1,15 @@
 import { InternalServerErrorHttpError } from "@aklinker1/zeta";
 import { env } from "../env";
 
-export async function createPortainerApi() {
-  const { BASE_URL, USERNAME, PASSWORD } = env;
+export interface PortainerApi {
+  listStacks: () => Promise<PortainerStack[]>;
+  getStack: (id: number) => Promise<PortainerStack>;
+  getStackFile: (id: number) => Promise<PortainerStackFile>;
+  updateStack: (id: number, options: UpdateStackOptions) => Promise<void>;
+}
+
+export async function createPortainerApi(): Promise<PortainerApi> {
+  const { baseUrl, username, password } = env;
 
   const checkResponse = (response: Response, expectedStatus = 200) => {
     if (response.status !== expectedStatus)
@@ -10,8 +17,8 @@ export async function createPortainerApi() {
   };
 
   const login = async (): Promise<PortainerLoginResponse> => {
-    const res = await fetch(`${BASE_URL}/auth`, {
-      body: JSON.stringify({ username: USERNAME, password: PASSWORD }),
+    const res = await fetch(`${baseUrl}/auth`, {
+      body: JSON.stringify({ username, password }),
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,63 +33,70 @@ export async function createPortainerApi() {
     Authorization: `Bearer ${jwt}`,
   };
 
-  return {
-    async listStacks(): Promise<PortainerStack[]> {
-      const res = await fetch(`${BASE_URL}/stacks`, {
-        headers: authHeaders,
-      });
+  const listStacks: PortainerApi["listStacks"] = async () => {
+    const res = await fetch(`${baseUrl}/stacks`, {
+      headers: authHeaders,
+    });
 
-      checkResponse(res);
-      return await res.json<PortainerStack[]>();
-    },
+    checkResponse(res);
+    return await res.json<PortainerStack[]>();
+  };
 
-    async getStack(id: number): Promise<PortainerStack> {
-      const res = await fetch(`${BASE_URL}/stacks/${id}`, {
-        headers: authHeaders,
-      });
+  const getStack: PortainerApi["getStack"] = async (id) => {
+    const res = await fetch(`${baseUrl}/stacks/${id}`, {
+      headers: authHeaders,
+    });
 
-      checkResponse(res);
-      return await res.json<PortainerStack>();
-    },
+    checkResponse(res);
+    return await res.json<PortainerStack>();
+  };
 
-    async getStackFile(id: number): Promise<PortainerStackFile> {
-      const res = await fetch(`${BASE_URL}/stacks/${id}/file`, {
-        headers: authHeaders,
-      });
+  const getStackFile: PortainerApi["getStackFile"] = async (id) => {
+    const res = await fetch(`${baseUrl}/stacks/${id}/file`, {
+      headers: authHeaders,
+    });
 
-      checkResponse(res);
-      return await res.json<PortainerStackFile>();
-    },
+    checkResponse(res);
+    return await res.json<PortainerStackFile>();
+  };
 
-    async updateStack(
-      id: number,
-      options: {
-        endpointId: number;
-        prune: boolean;
-        pullImage: boolean;
-        stackFileContent: string;
+  const updateStack: PortainerApi["updateStack"] = async (
+    id,
+    options,
+  ): Promise<void> => {
+    const updateUrl = new URL(`${baseUrl}/stacks/${id}`);
+    updateUrl.searchParams.set("endpointId", String(options.endpointId));
+
+    const res = await fetch(updateUrl.href, {
+      method: "PUT",
+      body: JSON.stringify({
+        prune: options.prune,
+        pullImage: options.pullImage,
+        stackFileContent: options.stackFileContent,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders,
       },
-    ): Promise<void> {
-      const updateUrl = new URL(`${BASE_URL}/stacks/${id}`);
-      updateUrl.searchParams.set("endpointId", String(options.endpointId));
+    });
 
-      const res = await fetch(updateUrl.href, {
-        method: "PUT",
-        body: JSON.stringify({
-          prune: options.prune,
-          pullImage: options.pullImage,
-          stackFileContent: options.stackFileContent,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders,
-        },
-      });
+    checkResponse(res);
+  };
 
-      checkResponse(res);
-    },
+  return {
+    listStacks,
+    getStack,
+    getStackFile,
+    updateStack,
   };
 }
+
+export type UpdateStackOptions = {
+  endpointId: number;
+  prune: boolean;
+  pullImage: boolean;
+  stackFileContent: string;
+};
 
 export interface PortainerLoginResponse {
   jwt: string;
@@ -97,8 +111,6 @@ export interface PortainerStack {
 export interface PortainerStackFile {
   StackFileContent: string;
 }
-
-export type PortainerApi = Awaited<ReturnType<typeof createPortainerApi>>;
 
 export class PortainerApiError extends InternalServerErrorHttpError {
   constructor(response: Response, options?: ErrorOptions) {

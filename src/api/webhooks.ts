@@ -6,7 +6,7 @@ import { ctxPlugin } from "../plugins/ctx-plugin";
 export const webhooksApp = createApp()
   .use(authPlugin)
   .use(ctxPlugin)
-  .get(
+  .post(
     "/api/webhook/stacks/:stackId",
     {
       operationId: "updateStackWebhook",

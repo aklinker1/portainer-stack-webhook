@@ -5,8 +5,8 @@ function requireEnv(key: string): string {
 }
 
 export const env = {
-  PORT: Number(process.env.PORT || 3000),
-  BASE_URL: requireEnv("BASE_URL"),
-  USERNAME: requireEnv("USERNAME"),
-  PASSWORD: requireEnv("PASSWORD"),
+  port: Number(process.env.PORT || 3000),
+  baseUrl: requireEnv("BASE_URL"),
+  username: requireEnv("USERNAME"),
+  password: requireEnv("PASSWORD"),
 };

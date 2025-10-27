@@ -5,7 +5,7 @@ import { ListStacksOutput } from "../models";
 import { PortainerStack } from "../utils/portainer";
 import { version } from "../version";
 
-const portainer = mockPortainerApi();
+const portainer = mockPortainerApi;
 mock.module("../utils/portainer", () => ({
   createPortainerApi: () => portainer,
 }));
