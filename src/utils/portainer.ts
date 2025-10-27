@@ -9,7 +9,7 @@ export interface PortainerApi {
 }
 
 export async function createPortainerApi(): Promise<PortainerApi> {
-  const { baseUrl, username, password } = env.portainer;
+  const { apiUrl, username, password } = env.portainer;
 
   const checkResponse = (response: Response, expectedStatus = 200) => {
     if (response.status !== expectedStatus)
@@ -17,7 +17,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
   };
 
   const login = async (): Promise<PortainerLoginResponse> => {
-    const res = await fetch(`${baseUrl}/auth`, {
+    const res = await fetch(`${apiUrl}/auth`, {
       body: JSON.stringify({ username, password }),
       method: "POST",
       headers: {
@@ -34,7 +34,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
   };
 
   const listStacks: PortainerApi["listStacks"] = async () => {
-    const res = await fetch(`${baseUrl}/stacks`, {
+    const res = await fetch(`${apiUrl}/stacks`, {
       headers: authHeaders,
     });
 
@@ -43,7 +43,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
   };
 
   const getStack: PortainerApi["getStack"] = async (id) => {
-    const res = await fetch(`${baseUrl}/stacks/${id}`, {
+    const res = await fetch(`${apiUrl}/stacks/${id}`, {
       headers: authHeaders,
     });
 
@@ -52,7 +52,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
   };
 
   const getStackFile: PortainerApi["getStackFile"] = async (id) => {
-    const res = await fetch(`${baseUrl}/stacks/${id}/file`, {
+    const res = await fetch(`${apiUrl}/stacks/${id}/file`, {
       headers: authHeaders,
     });
 
@@ -64,7 +64,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
     id,
     options,
   ): Promise<void> => {
-    const updateUrl = new URL(`${baseUrl}/stacks/${id}`);
+    const updateUrl = new URL(`${apiUrl}/stacks/${id}`);
     updateUrl.searchParams.set("endpointId", String(options.endpointId));
 
     const res = await fetch(updateUrl.href, {
