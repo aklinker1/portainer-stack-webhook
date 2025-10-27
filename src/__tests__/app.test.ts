@@ -131,7 +131,7 @@ describe("App Integration Tests", async () => {
       });
     });
 
-    it.only("should update the stack, pulling the latest images", async () => {
+    it("should update the stack, pulling the latest images", async () => {
       const request = new Request(
         `http://localhost/api/webhook/stacks/${stackId}`,
         {
@@ -139,8 +139,6 @@ describe("App Integration Tests", async () => {
         },
       );
       const response = await fetch(request);
-
-      console.log(await response.json());
 
       expect(response.status).toBe(HttpStatus.Accepted);
       expect(portainer.updateStack.mock.calls).toHaveLength(1);
