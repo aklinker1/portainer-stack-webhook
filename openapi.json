@@ -61,7 +61,7 @@
         ],
         "responses": {
           "202": {
-            "description": "Stack update submitted"
+            "description": "Accepted"
           },
           "400": {
             "description": "Bad Request",

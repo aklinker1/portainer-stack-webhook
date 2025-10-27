@@ -5,6 +5,9 @@ import { ListStacksOutput } from "../models";
 import type { PortainerStack } from "../utils/portainer";
 import { version } from "../version";
 import { portainerStackFactory } from "../testing/factories";
+import { env } from "../env";
+
+const API_KEY = "random-text";
 
 const portainer = mockPortainer;
 mock.module("../utils/portainer", () => ({
@@ -16,6 +19,11 @@ async function expectErrorResponse(response: Response, error: Error) {
   expect(await response.json()).toMatchObject({ message: error.message });
 }
 
+async function expectUnauthorizedResponse(response: Response, message: string) {
+  expect(response.status).toBe(HttpStatus.Unauthorized);
+  expect(await response.json()).toMatchObject({ message });
+}
+
 describe("App Integration Tests", async () => {
   const { app } = await import("../app");
   const fetch = app.build();
@@ -25,22 +33,27 @@ describe("App Integration Tests", async () => {
     portainer.getStack.mockReset();
     portainer.getStackFile.mockReset();
     portainer.updateStack.mockReset();
+    env.apiKey = API_KEY;
   });
 
   describe("GET /api/health", () => {
-    it("should return 200 OK with some server details", async () => {
-      const request = new Request("http://localhost/api/health");
+    const sendRequest = async () =>
+      fetch(new Request(`http://localhost/api/health`));
 
-      const response = await fetch(request);
-      const json = await response.json();
-
+    const expectSuccess = async (response: Response) => {
       expect(response.status).toBe(HttpStatus.Ok);
-      expect(json).toEqual({
+      expect(await response.json()).toEqual({
         version,
         status: "up",
         uptime: expect.any(Number) as any,
         since: expect.any(String) as any,
       });
+    };
+
+    it("should return 200 OK with some server details", async () => {
+      const response = await sendRequest();
+
+      await expectSuccess(response);
     });
   });
 
@@ -54,15 +67,59 @@ describe("App Integration Tests", async () => {
       { id: stacks[1]!.Id, name: stacks[1]!.Name },
     ];
 
-    it("should return a 200 OK and a list of current stacks", async () => {
-      portainer.listStacks.mockResolvedValue(stacks);
-      const request = new Request("http://localhost/api/stacks");
+    const sendRequest = async (apiKey: string | null = API_KEY) =>
+      fetch(
+        new Request(`http://localhost/api/stacks`, {
+          headers: apiKey ? { "X-API-Key": apiKey } : undefined,
+        }),
+      );
 
-      const response = await fetch(request);
-      const json = await response.json();
-
+    const expectSuccess = async (response: Response) => {
       expect(response.status).toBe(HttpStatus.Ok);
-      expect(json).toEqual(expected);
+      expect(await response.json()).toEqual(expected);
+    };
+
+    beforeEach(() => {
+      portainer.listStacks.mockResolvedValue(stacks);
+    });
+
+    describe("when env.apiKey is set", () => {
+      describe("when no API key is provided", () => {
+        it("should return 401 Unauthorized", async () => {
+          const response = await sendRequest(null);
+
+          await expectUnauthorizedResponse(
+            response,
+            "X-API-Key header is required",
+          );
+        });
+      });
+
+      describe("when an invalid API key is provided", () => {
+        it("should return 401 Unauthorized", async () => {
+          const response = await sendRequest("not" + API_KEY);
+
+          await expectUnauthorizedResponse(response, "Invalid API key");
+        });
+      });
+    });
+
+    describe("when env.apiKey is not set", () => {
+      beforeEach(() => {
+        env.apiKey = undefined;
+      });
+
+      it("should return 200 OK should return a 200 OK and a list of current stacks", async () => {
+        const response = await sendRequest(null);
+
+        await expectSuccess(response);
+      });
+    });
+
+    it("should return a 200 OK and a list of current stacks", async () => {
+      const response = await sendRequest();
+
+      await expectSuccess(response);
     });
   });
 
@@ -71,6 +128,25 @@ describe("App Integration Tests", async () => {
     const stackId = stack.Id;
     const endpointId = stack.EndpointId;
     const stackFileContent = "<docker compose code>";
+
+    const sendRequest = async (apiKey: string | null = API_KEY) =>
+      fetch(
+        new Request(`http://localhost/api/webhook/stacks/${stackId}`, {
+          method: "POST",
+          headers: apiKey ? { "X-API-Key": apiKey } : undefined,
+        }),
+      );
+
+    const expectSuccess = (response: Response) => {
+      expect(response.status).toBe(HttpStatus.Accepted);
+      expect(portainer.updateStack).toBeCalledTimes(1);
+      expect(portainer.updateStack).toBeCalledWith(stackId, {
+        endpointId,
+        stackFileContent,
+        prune: false,
+        pullImage: true,
+      });
+    };
 
     beforeEach(() => {
       portainer.getStack.mockResolvedValue(stack);
@@ -81,76 +157,84 @@ describe("App Integration Tests", async () => {
     });
 
     describe("when getStack throws an error", () => {
-      it("should fail", async () => {
-        const err = Error("Not Found");
-        portainer.getStack.mockRejectedValue(err);
+      const err = Error("Not Found");
 
-        const request = new Request(
-          `http://localhost/api/webhook/stacks/${stackId}`,
-          {
-            method: "POST",
-          },
-        );
-        const response = await fetch(request);
+      beforeEach(() => {
+        portainer.getStack.mockRejectedValue(err);
+      });
+
+      it("should fail", async () => {
+        const response = await sendRequest();
 
         await expectErrorResponse(response, err);
       });
     });
 
     describe("when getStackFile throws an error", () => {
-      it("should fail", async () => {
-        const err = Error("Not Found");
-        portainer.getStackFile.mockRejectedValue(err);
+      const err = Error("Not Found");
 
-        const request = new Request(
-          `http://localhost/api/webhook/stacks/${stackId}`,
-          {
-            method: "POST",
-          },
-        );
-        const response = await fetch(request);
+      beforeEach(() => {
+        portainer.getStackFile.mockRejectedValue(err);
+      });
+
+      it("should fail", async () => {
+        const response = await sendRequest();
 
         await expectErrorResponse(response, err);
       });
     });
 
     describe("when updateStack throws an error", () => {
-      it("should fail", async () => {
-        const err = Error("Some error");
-        portainer.updateStack.mockRejectedValue(err);
+      const err = Error("Some error");
 
-        const request = new Request(
-          `http://localhost/api/webhook/stacks/${stackId}`,
-          {
-            method: "POST",
-          },
-        );
-        const response = await fetch(request);
+      beforeEach(() => {
+        portainer.updateStack.mockRejectedValue(err);
+      });
+
+      it("should fail", async () => {
+        const response = await sendRequest();
 
         await expectErrorResponse(response, err);
       });
     });
 
-    it("should update the stack, pulling the latest images", async () => {
-      const request = new Request(
-        `http://localhost/api/webhook/stacks/${stackId}`,
-        {
-          method: "POST",
-        },
-      );
-      const response = await fetch(request);
+    describe("when env.apiKey is set", () => {
+      describe("when no API key is provided", () => {
+        it("should fail", async () => {
+          const response = await sendRequest(null);
 
-      expect(response.status).toBe(HttpStatus.Accepted);
-      expect(portainer.updateStack.mock.calls).toHaveLength(1);
-      expect(portainer.updateStack.mock.calls[0]).toEqual([
-        stackId,
-        {
-          endpointId,
-          stackFileContent,
-          prune: false,
-          pullImage: true,
-        },
-      ]);
+          await expectUnauthorizedResponse(
+            response,
+            "X-API-Key header is required",
+          );
+        });
+      });
+
+      describe("when an invalid API key is provided", () => {
+        it("should fail", async () => {
+          const response = await sendRequest("not" + API_KEY);
+
+          await expectUnauthorizedResponse(response, "Invalid API key");
+        });
+      });
+    });
+
+    describe("when env.apiKey is not set", () => {
+      beforeEach(() => {
+        env.apiKey = undefined;
+      });
+
+      it("should update the stack, pulling the latest images", async () => {
+        const response = await sendRequest(null);
+
+        expectSuccess(response);
+      });
+    });
+
+    it("should update the stack, pulling the latest images", async () => {
+      const response = await sendRequest();
+
+      expectSuccess(response);
     });
   });
 });

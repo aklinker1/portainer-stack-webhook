@@ -17,12 +17,17 @@ services:
       USERNAME: your-username                     # Required, username to login with
       PASSWORD: your-password                     # Required, password to login with
       PORT: 3000                                  # Optional, default 3000
+      API_KEY: your-api-key                       # Optional, set to a any string to require authentication
 ```
 
 To tell Portainer to pull the latest images and update the stack, make a simple POST request:
 
 ```sh
+# No authentication
 curl -X POST http://localhost:3000/api/webhook/stacks/:stackId
+
+# With an API key
+curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/:stackId
 ```
 
 You can get the `stackId` from the `GET /api/stacks` endpoint.
@@ -36,6 +41,8 @@ To install dependencies:
 ```bash
 bun install
 ```
+
+`@aklinker1/zeta` docs: https://jsr.io/@aklinker1/zeta
 
 To run:
 
@@ -52,7 +59,7 @@ To run:
    curl -X POST http://localhost:3000/api/webhook/stacks/123
    ```
 
-You can also run tests:
+To run tests:
 
 ```sh
 bun test
