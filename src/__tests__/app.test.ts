@@ -15,7 +15,7 @@ async function expectErrorResponse(response: Response, error: Error) {
   expect(await response.json()).toMatchObject({ message: error.message });
 }
 
-describe("App", async () => {
+describe("App Integration Tests", async () => {
   const { app } = await import("../app");
   const fetch = app.build();
 
@@ -65,7 +65,7 @@ describe("App", async () => {
     });
   });
 
-  describe("POST /api/webhooks/stacks/{id}", () => {
+  describe("POST /api/webhook/stacks/{id}", () => {
     const stackId = 123;
     const endpointId = 3;
     const stackFileContent = "<docker compose code>";
@@ -88,7 +88,7 @@ describe("App", async () => {
         portainer.getStack.mockRejectedValue(err);
 
         const request = new Request(
-          `http://localhost/api/webhooks/stacks/${stackId}`,
+          `http://localhost/api/webhook/stacks/${stackId}`,
           {
             method: "POST",
           },
@@ -105,7 +105,7 @@ describe("App", async () => {
         portainer.getStackFile.mockRejectedValue(err);
 
         const request = new Request(
-          `http://localhost/api/webhooks/stacks/${stackId}`,
+          `http://localhost/api/webhook/stacks/${stackId}`,
           {
             method: "POST",
           },
@@ -122,7 +122,7 @@ describe("App", async () => {
         portainer.updateStack.mockRejectedValue(err);
 
         const request = new Request(
-          `http://localhost/api/webhooks/stacks/${stackId}`,
+          `http://localhost/api/webhook/stacks/${stackId}`,
           {
             method: "POST",
           },
@@ -135,7 +135,7 @@ describe("App", async () => {
 
     it("should update the stack, pulling the latest images", async () => {
       const request = new Request(
-        `http://localhost/api/webhooks/stacks/${stackId}`,
+        `http://localhost/api/webhook/stacks/${stackId}`,
         {
           method: "POST",
         },
