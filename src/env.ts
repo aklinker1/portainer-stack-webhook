@@ -1,4 +1,4 @@
-import { violet, bold, cyan, red } from "./colors";
+import { violet, bold, cyan, red, yellow } from "./colors";
 
 function requireEnv(key: string): string {
   const value = process.env[key];
@@ -13,9 +13,11 @@ function requireEnv(key: string): string {
 
 export const env = {
   port: Number(process.env.PORT || 3000),
-  baseUrl: requireEnv("BASE_URL"),
-  username: requireEnv("USERNAME"),
-  password: requireEnv("PASSWORD"),
+  portainer: {
+    baseUrl: process.env.BASE_URL || requireEnv("PORTAINER_BASE_URL"),
+    username: process.env.USERNAME || requireEnv("PORTAINER_USERNAME"),
+    password: process.env.PASSWORD || requireEnv("PORTAINER_PASSWORD"),
+  },
   apiKey: process.env.API_KEY || undefined,
 };
 
@@ -28,5 +30,13 @@ export function logEnvWarnings() {
     console.log(
       `${cyan(bold("ℹ"))} ${violet("API_KEY")} not set - endpoints are not protected`,
     );
+  }
+
+  for (const key of ["BASE_URL", "USERNAME", "PASSWORD"]) {
+    if (process.env[key]) {
+      console.log(
+        `${yellow(bold("⚠"))} ${violet(key)} is deprecated, use ${violet("PORTAINER_" + key)} instead`,
+      );
+    }
   }
 }

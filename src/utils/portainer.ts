@@ -9,7 +9,7 @@ export interface PortainerApi {
 }
 
 export async function createPortainerApi(): Promise<PortainerApi> {
-  const { baseUrl, username, password } = env;
+  const { baseUrl, username, password } = env.portainer;
 
   const checkResponse = (response: Response, expectedStatus = 200) => {
     if (response.status !== expectedStatus)
