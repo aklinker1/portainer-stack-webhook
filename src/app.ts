@@ -1,8 +1,9 @@
 import { createApp } from "@aklinker1/zeta";
 import { version } from "../package.json";
 import { zodSchemaAdapter } from "@aklinker1/zeta/adapters/zod-schema-adapter";
-import { systemApis } from "./api/system-apis";
-import { stackApis } from "./api/stack-apis";
+import { healthApp } from "./api/health";
+import { stacksApp } from "./api/stacks";
+import { webhooksApp } from "./api/webhooks";
 
 export const app = createApp({
   schemaAdapter: zodSchemaAdapter,
@@ -13,5 +14,6 @@ export const app = createApp({
     },
   },
 })
-  .use(systemApis)
-  .use(stackApis);
+  .use(healthApp)
+  .use(stacksApp)
+  .use(webhooksApp);

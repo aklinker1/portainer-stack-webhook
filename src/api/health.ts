@@ -4,7 +4,7 @@ import { version } from "../version";
 
 const since = new Date();
 
-export const systemApis = createApp().get(
+export const healthApp = createApp().get(
   "/api/health",
   {
     operationId: "getHealth",
