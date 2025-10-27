@@ -13,7 +13,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      PORTAINER_BASE_URL: https://portainer.example.com/api # Required, full URL including /api
+      PORTAINER_API_URL: https://portainer.example.com/api  # Required, full URL including /api
       PORTAINER_USERNAME: your-username                     # Required, username to login with
       PORTAINER_PASSWORD: your-password                     # Required, password to login with
       PORT: 3000                                            # Optional, default 3000

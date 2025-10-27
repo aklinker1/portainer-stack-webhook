@@ -14,7 +14,7 @@ function requireEnv(key: string): string {
 export const env = {
   port: Number(process.env.PORT || 3000),
   portainer: {
-    baseUrl: process.env.BASE_URL || requireEnv("PORTAINER_BASE_URL"),
+    baseUrl: process.env.BASE_URL || requireEnv("PORTAINER_API_URL"),
     username: process.env.USERNAME || requireEnv("PORTAINER_USERNAME"),
     password: process.env.PASSWORD || requireEnv("PORTAINER_PASSWORD"),
   },
