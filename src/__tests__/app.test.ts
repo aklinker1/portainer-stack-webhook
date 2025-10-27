@@ -2,7 +2,7 @@ import { describe, it, expect, mock, beforeEach } from "bun:test";
 import { mockPortainer } from "../testing/mock-portainer";
 import { HttpStatus } from "@aklinker1/zeta";
 import { ListStacksOutput } from "../models";
-import { PortainerStack } from "../utils/portainer";
+import type { PortainerStack } from "../utils/portainer";
 import { version } from "../version";
 import { portainerStackFactory } from "../testing/factories";
 
@@ -50,8 +50,8 @@ describe("App Integration Tests", async () => {
       portainerStackFactory(),
     ];
     const expected: ListStacksOutput = [
-      { id: stacks[0].Id, name: stacks[0].Name },
-      { id: stacks[1].Id, name: stacks[1].Name },
+      { id: stacks[0]!.Id, name: stacks[0]!.Name },
+      { id: stacks[1]!.Id, name: stacks[1]!.Name },
     ];
 
     it("should return a 200 OK and a list of current stacks", async () => {

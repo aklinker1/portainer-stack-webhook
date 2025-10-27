@@ -1,5 +1,5 @@
 import { createFactory, createSequence } from "@aklinker1/zero-factory";
-import { PortainerStack } from "../utils/portainer";
+import type { PortainerStack } from "../utils/portainer";
 
 export const portainerStackFactory = createFactory<PortainerStack>({
   Id: createSequence(),
