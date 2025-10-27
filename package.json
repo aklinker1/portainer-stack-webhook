@@ -15,7 +15,7 @@
     "docker:push": "docker push aklinker1/portainer-stack-webhook"
   },
   "dependencies": {
-    "@aklinker1/zeta": "^0.6.6",
+    "@aklinker1/zeta": "^1.1.0",
     "zod": "^4.1.8"
   },
   "devDependencies": {

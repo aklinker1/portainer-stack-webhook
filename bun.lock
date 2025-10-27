@@ -4,7 +4,7 @@
     "": {
       "name": "portainer-swarm-updater",
       "dependencies": {
-        "@aklinker1/zeta": "^0.6.6",
+        "@aklinker1/zeta": "^1.1.0",
         "zod": "^4.1.8",
       },
       "devDependencies": {
@@ -19,7 +19,7 @@
   "packages": {
     "@aklinker1/check": ["@aklinker1/check@2.1.0", "", { "dependencies": { "@antfu/utils": "^0.7.7", "ci-info": "^4.0.0", "citty": "^0.1.6" }, "bin": { "check": "bin/check.mjs" } }, "sha512-x+0vxb0vHV+6ZskcLYobI6FCAFG1jwVGgKuH9pTfHLW3vlzbGSGUKcxbCuMI3Q51WZS8oE4UfB+4v5M2+0uz1g=="],
 
-    "@aklinker1/zeta": ["@jsr/aklinker1__zeta@0.6.6", "https://npm.jsr.io/~/11/@jsr/aklinker1__zeta/0.6.6.tgz", { "dependencies": { "@standard-schema/spec": "^1.0.0", "openapi-types": "^12.1.3", "rou3": "^0.7.1" } }, "sha512-1c2lflIZ2ENK5naeYJtpk1ViW3v5yGyApTU4jDKZ7qVKBpNNDcFtbLmUvn6A3tycoBG1vLz6RUdF7+1GbA73Cw=="],
+    "@aklinker1/zeta": ["@jsr/aklinker1__zeta@1.1.0", "https://npm.jsr.io/~/11/@jsr/aklinker1__zeta/1.1.0.tgz", { "dependencies": { "@standard-schema/spec": "^1.0.0", "openapi-types": "^12.1.3", "rou3": "^0.7.1" } }, "sha512-Yol8Gc/0wjXk+bp316PYkJDVOc4k+2SR3DM0yNCEkZqL39o6gTKJhou3xe7MNoY8fCgkqHkvMOJni4onHsjNvA=="],
 
     "@antfu/utils": ["@antfu/utils@0.7.10", "", {}, "sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww=="],
 
