@@ -13,11 +13,11 @@ services:
     ports:
       - 3000:3000
     environment:
-      BASE_URL: https://portainer.example.com/api # Required, full URL including /api
-      USERNAME: your-username                     # Required, username to login with
-      PASSWORD: your-password                     # Required, password to login with
-      PORT: 3000                                  # Optional, default 3000
-      API_KEY: your-api-key                       # Optional, set to a any string to require authentication
+      PORTAINER_API_URL: https://portainer.example.com/api  # Required, full URL including /api
+      PORTAINER_USERNAME: your-username                     # Required, username to login with
+      PORTAINER_PASSWORD: your-password                     # Required, password to login with
+      PORT: 3000                                            # Optional, default 3000
+      API_KEY: your-api-key                                 # Optional, set to a any string to require authentication
 ```
 
 To tell Portainer to pull the latest images and update the stack, make a simple POST request:
