@@ -1,12 +1,8 @@
 import { InternalServerErrorHttpError } from "@aklinker1/zeta";
+import { env } from "../env";
 
 export async function createPortainerApi() {
-  const baseUrl = process.env.BASE_URL;
-  if (!baseUrl) throw Error(`BASE_URL`);
-  const username = process.env.USERNAME;
-  if (!username) throw Error(`USERNAME`);
-  const password = process.env.PASSWORD;
-  if (!password) throw Error(`PASSWORD`);
+  const { BASE_URL, USERNAME, PASSWORD } = env;
 
   const checkResponse = (response: Response, expectedStatus = 200) => {
     if (response.status !== expectedStatus)
@@ -14,8 +10,8 @@ export async function createPortainerApi() {
   };
 
   const login = async (): Promise<PortainerLoginResponse> => {
-    const res = await fetch(`${baseUrl}/auth`, {
-      body: JSON.stringify({ username, password }),
+    const res = await fetch(`${BASE_URL}/auth`, {
+      body: JSON.stringify({ username: USERNAME, password: PASSWORD }),
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +28,7 @@ export async function createPortainerApi() {
 
   return {
     async listStacks(): Promise<PortainerStack[]> {
-      const res = await fetch(`${baseUrl}/stacks`, {
+      const res = await fetch(`${BASE_URL}/stacks`, {
         headers: authHeaders,
       });
 
@@ -41,7 +37,7 @@ export async function createPortainerApi() {
     },
 
     async getStack(id: number): Promise<PortainerStack> {
-      const res = await fetch(`${baseUrl}/stacks/${id}`, {
+      const res = await fetch(`${BASE_URL}/stacks/${id}`, {
         headers: authHeaders,
       });
 
@@ -50,7 +46,7 @@ export async function createPortainerApi() {
     },
 
     async getStackFile(id: number): Promise<PortainerStackFile> {
-      const res = await fetch(`${baseUrl}/stacks/${id}/file`, {
+      const res = await fetch(`${BASE_URL}/stacks/${id}/file`, {
         headers: authHeaders,
       });
 
@@ -67,7 +63,7 @@ export async function createPortainerApi() {
         stackFileContent: string;
       },
     ): Promise<void> {
-      const updateUrl = new URL(`${baseUrl}/stacks/${id}`);
+      const updateUrl = new URL(`${BASE_URL}/stacks/${id}`);
       updateUrl.searchParams.set("endpointId", String(options.endpointId));
 
       const res = await fetch(updateUrl.href, {
