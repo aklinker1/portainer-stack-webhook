@@ -7,6 +7,9 @@ import { version } from "../version";
 import { portainerStackFactory } from "../testing/factories";
 import { env } from "../env";
 
+mock.module("../env", () => ({
+  env: {},
+}));
 const API_KEY = "random-text";
 
 const portainer = mockPortainer;
