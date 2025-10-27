@@ -19,4 +19,4 @@
 ## Libraries
 
 - `@aklinker1/zeta`: Composable, testable, OpenAPI-first backend framework with validation built-in.
-   > @fetch https://raw.githubusercontent.com/aklinker1/zeta/refs/heads/main/README.md
+  > @fetch https://raw.githubusercontent.com/aklinker1/zeta/refs/heads/main/README.md
