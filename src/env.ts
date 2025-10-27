@@ -32,11 +32,15 @@ export function logEnvWarnings() {
     );
   }
 
-  for (const key of ["BASE_URL", "USERNAME", "PASSWORD"]) {
-    if (process.env[key]) {
-      console.log(
-        `${yellow(bold("⚠"))} ${violet(key)} is deprecated, use ${violet("PORTAINER_" + key)} instead`,
-      );
-    }
+  maybeLogDeprecated("BASE_URL", "PORTAINER_API_URL");
+  maybeLogDeprecated("USERNAME", "PORTAINER_USERNAME");
+  maybeLogDeprecated("PASSWORD", "PORTAINER_PASSWORD");
+}
+
+function maybeLogDeprecated(key: string, replacement: string): void {
+  if (process.env[key]) {
+    console.log(
+      `${yellow(bold("⚠"))} ${violet(key)} is deprecated, use ${violet(replacement)} instead`,
+    );
   }
 }
