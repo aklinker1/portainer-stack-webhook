@@ -25,7 +25,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       },
     });
     if (res.status !== 200) throw new PortainerApiError(res);
-    return await res.json<PortainerLoginResponse>();
+    return (await res.json()) as any;
   };
 
   const { jwt } = await login();
@@ -39,7 +39,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
     });
 
     checkResponse(res);
-    return await res.json<PortainerStack[]>();
+    return (await res.json()) as any;
   };
 
   const getStack: PortainerApi["getStack"] = async (id) => {
@@ -48,7 +48,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
     });
 
     checkResponse(res);
-    return await res.json<PortainerStack>();
+    return (await res.json()) as any;
   };
 
   const getStackFile: PortainerApi["getStackFile"] = async (id) => {
@@ -57,7 +57,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
     });
 
     checkResponse(res);
-    return await res.json<PortainerStackFile>();
+    return (await res.json()) as any;
   };
 
   const updateStack: PortainerApi["updateStack"] = async (

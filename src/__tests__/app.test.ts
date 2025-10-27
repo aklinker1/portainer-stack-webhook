@@ -1,11 +1,12 @@
 import { describe, it, expect, mock, beforeEach } from "bun:test";
-import { mockPortainerApi } from "../utils/testing";
+import { mockPortainer } from "../testing/mock-portainer";
 import { HttpStatus } from "@aklinker1/zeta";
 import { ListStacksOutput } from "../models";
-import { PortainerStack } from "../utils/portainer";
+import type { PortainerStack } from "../utils/portainer";
 import { version } from "../version";
+import { portainerStackFactory } from "../testing/factories";
 
-const portainer = mockPortainerApi;
+const portainer = mockPortainer;
 mock.module("../utils/portainer", () => ({
   createPortainerApi: () => portainer,
 }));
@@ -45,12 +46,12 @@ describe("App Integration Tests", async () => {
 
   describe("GET /api/stacks", () => {
     const stacks: PortainerStack[] = [
-      { Id: 1, Name: "service-1", EndpointId: 11 },
-      { Id: 2, Name: "service-2", EndpointId: 22 },
+      portainerStackFactory(),
+      portainerStackFactory(),
     ];
     const expected: ListStacksOutput = [
-      { id: 1, name: "service-1" },
-      { id: 2, name: "service-2" },
+      { id: stacks[0]!.Id, name: stacks[0]!.Name },
+      { id: stacks[1]!.Id, name: stacks[1]!.Name },
     ];
 
     it("should return a 200 OK and a list of current stacks", async () => {
@@ -61,21 +62,18 @@ describe("App Integration Tests", async () => {
       const json = await response.json();
 
       expect(response.status).toBe(HttpStatus.Ok);
-      expect(json).toMatchObject(expected);
+      expect(json).toEqual(expected);
     });
   });
 
   describe("POST /api/webhook/stacks/{id}", () => {
-    const stackId = 123;
-    const endpointId = 3;
+    const stack = portainerStackFactory();
+    const stackId = stack.Id;
+    const endpointId = stack.EndpointId;
     const stackFileContent = "<docker compose code>";
 
     beforeEach(() => {
-      portainer.getStack.mockResolvedValue({
-        Id: stackId,
-        EndpointId: endpointId,
-        Name: "Example Stack",
-      });
+      portainer.getStack.mockResolvedValue(stack);
       portainer.getStackFile.mockResolvedValue({
         StackFileContent: stackFileContent,
       });
