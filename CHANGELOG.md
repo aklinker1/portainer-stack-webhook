@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.2.3
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.2...v0.2.3)
+
+### 🏡 Chore
+
+- Use `--frozen-lockfile` in dockerfile ([bee063b](https://github.com/aklinker1/portainer-stack-webhook/commit/bee063b))
+- Rename env vars to add `PORTAINER_` prefix ([#7](https://github.com/aklinker1/portainer-stack-webhook/pull/7))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](https://github.com/aklinker1))
+
 ## v0.2.2
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.1...v0.2.2)
