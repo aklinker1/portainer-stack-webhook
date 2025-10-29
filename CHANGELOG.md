@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.5
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.4...v0.2.5)
+
+### 🏡 Chore
+
+- Remove debug log ([5f8dee1](https://github.com/aklinker1/portainer-stack-webhook/commit/5f8dee1))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](https://github.com/aklinker1))
+
 ## v0.2.4
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.3...v0.2.4)
