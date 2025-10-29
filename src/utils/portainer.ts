@@ -39,7 +39,6 @@ export function createPortainerApi(): PortainerApi {
 
     const json = (await res.json()) as PortainerLoginResponse;
     jwt.setValue(json.jwt);
-    console.log(json);
 
     return json;
   };
