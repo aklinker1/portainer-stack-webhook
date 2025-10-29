@@ -14,6 +14,7 @@ export const app = createApp({
     },
   },
 })
+  .onGlobalError(({ error }) => console.error(error))
   .use(healthApp)
   .use(stacksApp)
   .use(webhooksApp);

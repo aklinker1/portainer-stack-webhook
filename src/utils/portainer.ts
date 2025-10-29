@@ -11,9 +11,13 @@ export interface PortainerApi {
 export async function createPortainerApi(): Promise<PortainerApi> {
   const { apiUrl, username, password } = env.portainer;
 
-  const checkResponse = (response: Response, expectedStatus = 200) => {
+  const checkResponse = async (response: Response, expectedStatus = 200) => {
     if (response.status !== expectedStatus)
-      throw new PortainerApiError(response);
+      throw new PortainerApiError(
+        expectedStatus,
+        response,
+        await response.text(),
+      );
   };
 
   const login = async (): Promise<PortainerLoginResponse> => {
@@ -24,7 +28,8 @@ export async function createPortainerApi(): Promise<PortainerApi> {
         "Content-Type": "application/json",
       },
     });
-    if (res.status !== 200) throw new PortainerApiError(res);
+
+    await checkResponse(res);
     return (await res.json()) as any;
   };
 
@@ -38,7 +43,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       headers: authHeaders,
     });
 
-    checkResponse(res);
+    await checkResponse(res);
     return (await res.json()) as any;
   };
 
@@ -47,7 +52,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       headers: authHeaders,
     });
 
-    checkResponse(res);
+    await checkResponse(res);
     return (await res.json()) as any;
   };
 
@@ -56,7 +61,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       headers: authHeaders,
     });
 
-    checkResponse(res);
+    await checkResponse(res);
     return (await res.json()) as any;
   };
 
@@ -80,7 +85,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       },
     });
 
-    checkResponse(res);
+    await checkResponse(res);
   };
 
   return {
@@ -113,7 +118,16 @@ export interface PortainerStackFile {
 }
 
 export class PortainerApiError extends InternalServerErrorHttpError {
-  constructor(response: Response, options?: ErrorOptions) {
-    super("Request to Portainer API failed", { response }, options);
+  constructor(
+    expectedStatus: number,
+    response: Response,
+    readonly text: string,
+    options?: ErrorOptions,
+  ) {
+    super(
+      `Request to Portainer API failed. Expected status ${expectedStatus}, received ${response.status}`,
+      { response, text },
+      options,
+    );
   }
 }

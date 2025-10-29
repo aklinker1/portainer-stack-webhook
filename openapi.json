@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Portainer Stack Webhook",
-    "version": "0.2.2"
+    "version": "0.2.3"
   },
   "paths": {
     "/api/health": {
