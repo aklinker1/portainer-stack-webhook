@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.2.4
+
+[compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.3...v0.2.4)
+
+### 🩹 Fixes
+
+- Improved portainer error logs and responses ([b5af430](https://github.com/aklinker1/portainer-stack-webhook/commit/b5af430))
+
+### 🏡 Chore
+
+- Cache and invalidate portainer JWT so it's not used after expiring ([669b3c8](https://github.com/aklinker1/portainer-stack-webhook/commit/669b3c8))
+- Fix failing checks ([8fe4d38](https://github.com/aklinker1/portainer-stack-webhook/commit/8fe4d38))
+
+### ❤️ Contributors
+
+- Aaron ([@aklinker1](https://github.com/aklinker1))
+
 ## v0.2.3
 
 [compare changes](https://github.com/aklinker1/portainer-stack-webhook/compare/v0.2.2...v0.2.3)
