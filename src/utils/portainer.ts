@@ -1,10 +1,9 @@
 import { InternalServerErrorHttpError } from "@aklinker1/zeta";
 import { env } from "../env";
 import { createTtlValue } from "./ttl-value";
-import { bold, cyan, dim } from "../colors";
+import { bold, cyan } from "../colors";
 
 export interface PortainerApi {
-  login: () => Promise<PortainerLoginResponse>;
   listStacks: () => Promise<PortainerStack[]>;
   getStack: (id: number) => Promise<PortainerStack>;
   getStackFile: (id: number) => Promise<PortainerStackFile>;
@@ -103,7 +102,6 @@ export function createPortainerApi(): PortainerApi {
   };
 
   return {
-    login,
     listStacks,
     getStack,
     getStackFile,
