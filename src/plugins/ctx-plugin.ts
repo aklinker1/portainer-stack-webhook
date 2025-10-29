@@ -3,6 +3,6 @@ import { createPortainerApi } from "../utils/portainer";
 
 export const ctxPlugin = createApp()
   .decorate({
-    portainer: await createPortainerApi(),
+    portainer: createPortainerApi(),
   })
   .export();

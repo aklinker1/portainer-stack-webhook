@@ -1,14 +1,17 @@
 import { InternalServerErrorHttpError } from "@aklinker1/zeta";
 import { env } from "../env";
+import { createTtlValue } from "./ttl-value";
+import { bold, cyan, dim } from "../colors";
 
 export interface PortainerApi {
+  login: () => Promise<PortainerLoginResponse>;
   listStacks: () => Promise<PortainerStack[]>;
   getStack: (id: number) => Promise<PortainerStack>;
   getStackFile: (id: number) => Promise<PortainerStackFile>;
   updateStack: (id: number, options: UpdateStackOptions) => Promise<void>;
 }
 
-export async function createPortainerApi(): Promise<PortainerApi> {
+export function createPortainerApi(): PortainerApi {
   const { apiUrl, username, password } = env.portainer;
 
   const checkResponse = async (response: Response, expectedStatus = 200) => {
@@ -20,7 +23,11 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       );
   };
 
+  const jwt = createTtlValue<string>(60 * 60e3); // 1 hour (experimentally, it seems portainer JWTs last 8 hours)
+
   const login = async (): Promise<PortainerLoginResponse> => {
+    console.log(`${cyan(bold("ℹ"))} Fetching new JWT for portainer...`);
+
     const res = await fetch(`${apiUrl}/auth`, {
       body: JSON.stringify({ username, password }),
       method: "POST",
@@ -30,17 +37,24 @@ export async function createPortainerApi(): Promise<PortainerApi> {
     });
 
     await checkResponse(res);
-    return (await res.json()) as any;
+
+    const json = (await res.json()) as PortainerLoginResponse;
+    jwt.setValue(json.jwt);
+    console.log(json);
+
+    return json;
   };
 
-  const { jwt } = await login();
-  const authHeaders = {
-    Authorization: `Bearer ${jwt}`,
+  const getAuthHeaders = async () => {
+    const value = jwt.getValue() || (await login().then((res) => res.jwt));
+    return {
+      Authorization: `Bearer ${value}`,
+    };
   };
 
   const listStacks: PortainerApi["listStacks"] = async () => {
     const res = await fetch(`${apiUrl}/stacks`, {
-      headers: authHeaders,
+      headers: await getAuthHeaders(),
     });
 
     await checkResponse(res);
@@ -49,7 +63,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
 
   const getStack: PortainerApi["getStack"] = async (id) => {
     const res = await fetch(`${apiUrl}/stacks/${id}`, {
-      headers: authHeaders,
+      headers: await getAuthHeaders(),
     });
 
     await checkResponse(res);
@@ -58,7 +72,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
 
   const getStackFile: PortainerApi["getStackFile"] = async (id) => {
     const res = await fetch(`${apiUrl}/stacks/${id}/file`, {
-      headers: authHeaders,
+      headers: await getAuthHeaders(),
     });
 
     await checkResponse(res);
@@ -81,7 +95,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
       }),
       headers: {
         "Content-Type": "application/json",
-        ...authHeaders,
+        ...(await getAuthHeaders()),
       },
     });
 
@@ -89,6 +103,7 @@ export async function createPortainerApi(): Promise<PortainerApi> {
   };
 
   return {
+    login,
     listStacks,
     getStack,
     getStackFile,
