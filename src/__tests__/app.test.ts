@@ -70,12 +70,15 @@ describe("App Integration Tests", async () => {
       { id: stacks[1]!.Id, name: stacks[1]!.Name },
     ];
 
-    const sendRequest = async (apiKey: string | null = API_KEY) =>
-      fetch(
+    const sendRequest = async (apiKey: string | null = API_KEY) => {
+      const headers: Record<string, string> = { "X-Forwarded-For": "203.0.113.5" };
+      if (apiKey) headers["X-API-Key"] = apiKey;
+      return fetch(
         new Request(`http://localhost/api/stacks`, {
-          headers: apiKey ? { "X-API-Key": apiKey } : undefined,
+          headers,
         }),
       );
+    };
 
     const expectSuccess = async (response: Response) => {
       expect(response.status).toBe(HttpStatus.Ok);
@@ -132,13 +135,16 @@ describe("App Integration Tests", async () => {
     const endpointId = stack.EndpointId;
     const stackFileContent = "<docker compose code>";
 
-    const sendRequest = async (apiKey: string | null = API_KEY) =>
-      fetch(
+    const sendRequest = async (apiKey: string | null = API_KEY) => {
+      const headers: Record<string, string> = { "X-Forwarded-For": "203.0.113.5" };
+      if (apiKey) headers["X-API-Key"] = apiKey;
+      return fetch(
         new Request(`http://localhost/api/webhook/stacks/${stackId}`, {
           method: "POST",
-          headers: apiKey ? { "X-API-Key": apiKey } : undefined,
+          headers,
         }),
       );
+    };
 
     const expectSuccess = (response: Response) => {
       expect(response.status).toBe(HttpStatus.Accepted);
