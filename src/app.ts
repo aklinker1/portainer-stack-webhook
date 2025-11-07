@@ -1,4 +1,5 @@
 import { createApp } from "@aklinker1/zeta";
+import { logger } from "./utils/logger";
 import { version } from "../package.json";
 import { zodSchemaAdapter } from "@aklinker1/zeta/adapters/zod-schema-adapter";
 import { healthApp } from "./api/health";
@@ -14,7 +15,9 @@ export const app = createApp({
     },
   },
 })
-  .onGlobalError(({ error }) => console.error(error))
+  .onGlobalError(({ error }) =>
+    logger.error("global.error", { error: String(error) }),
+  )
   .use(healthApp)
   .use(stacksApp)
   .use(webhooksApp);

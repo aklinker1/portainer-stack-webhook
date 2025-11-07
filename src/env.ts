@@ -1,8 +1,11 @@
-import { violet, bold, cyan, red, yellow } from "./colors";
+import { violet, bold, red } from "./colors";
+import { logger } from "./utils/logger";
 
 function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
+    logger.error("env.missing", { message: `The ${key} env var is required` });
+    // keep the old visual warning too for very early startup clarity
     console.log(
       `${red(bold("⚠ Fatal"))}: The ${violet(key)} env var is required`,
     );
@@ -23,13 +26,13 @@ export const env = {
 
 export function logEnvWarnings() {
   if (env.apiKey) {
-    console.log(
-      `${cyan(bold("ℹ"))} ${violet("API_KEY")} set - endpoints are protected`,
-    );
+    logger.info("env.api_key", {
+      message: "API_KEY set - endpoints are protected",
+    });
   } else {
-    console.log(
-      `${cyan(bold("ℹ"))} ${violet("API_KEY")} not set - endpoints are not protected`,
-    );
+    logger.info("env.api_key", {
+      message: "API_KEY not set - endpoints are not protected",
+    });
   }
 
   maybeLogDeprecated("BASE_URL", "PORTAINER_API_URL");
@@ -39,8 +42,8 @@ export function logEnvWarnings() {
 
 function maybeLogDeprecated(key: string, replacement: string): void {
   if (process.env[key]) {
-    console.log(
-      `${yellow(bold("⚠"))} ${violet(key)} is deprecated, use ${violet(replacement)} instead`,
-    );
+    logger.warn("env.deprecated", {
+      message: `${key} is deprecated, use ${replacement} instead`,
+    });
   }
 }
