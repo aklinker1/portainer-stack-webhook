@@ -3,7 +3,9 @@ import { bold, dim, red, yellow, green, cyan, violet, blue } from "../colors";
 type Meta = Record<string, unknown> | undefined;
 
 const isProd = process.env.NODE_ENV === "production";
-const format = (process.env.LOG_FORMAT || (isProd ? "json" : "pretty")).toLowerCase();
+const format = (
+  process.env.LOG_FORMAT || (isProd ? "json" : "pretty")
+).toLowerCase();
 
 function safeString(v: unknown) {
   if (v === undefined) return "";
@@ -19,10 +21,14 @@ function safeString(v: unknown) {
 function prettyAction(message?: string, meta?: Meta) {
   const m = message ?? "";
   // Prefer explicit route if provided
-  if (meta && typeof meta.route === "string") return String(meta.route);
+  if (meta && typeof meta["route"] === "string")
+    return String(meta["route"] as string);
 
   // if message looks like `auth.missing_api_key` -> AUTH
-  if (String(m).includes(".")) return String(m).split(".")[0].toUpperCase();
+  if (String(m).includes(".")) {
+    const part = String(m).split(".")[0] ?? "";
+    return part.toUpperCase();
+  }
   return String(m).toUpperCase();
 }
 
@@ -40,8 +46,13 @@ export const createLogger = (service = "portainer-stack-webhook") => {
 
   const logPretty = (level: string, message: string, meta?: Meta) => {
     const t = new Date().toISOString();
-    const lvl = level === "error" ? red(level.toUpperCase()) : level === "warn" ? yellow(level.toUpperCase()) : green(level.toUpperCase());
-    const action = prettyAction(message, meta);
+    const lvl =
+      level === "error"
+        ? red(level.toUpperCase())
+        : level === "warn"
+          ? yellow(level.toUpperCase())
+          : green(level.toUpperCase());
+    // derived action (kept as a function call below when needed)
 
     // method color
     const method = meta?.method ? String(meta.method).toUpperCase() : undefined;
@@ -49,20 +60,20 @@ export const createLogger = (service = "portainer-stack-webhook") => {
       ? method === "GET"
         ? blue(method)
         : method === "POST"
-        ? violet(method)
-        : method === "PUT"
-        ? yellow(method)
-        : method === "DELETE"
-        ? red(method)
-        : cyan(method)
+          ? violet(method)
+          : method === "PUT"
+            ? yellow(method)
+            : method === "DELETE"
+              ? red(method)
+              : cyan(method)
       : undefined;
 
     // path (prefer meta.path, fall back to meta.route)
-    const pathRaw = meta?.path ?? meta?.route;
+    const pathRaw = meta?.["path"] ?? meta?.["route"];
     const path = pathRaw ? cyan(String(pathRaw)) : undefined;
 
     // status coloring helper (only color numeric statuses)
-    const colorStatus = (s: unknown) => {
+    const _colorStatus = (s: unknown) => {
       const n = Number(s);
       if (Number.isInteger(n)) {
         if (n >= 500) return red(String(n));
@@ -78,7 +89,9 @@ export const createLogger = (service = "portainer-stack-webhook") => {
     if (methodColored) pieces.push(methodColored);
     if (path) pieces.push(path);
     // only show client IP for compact logs
-    const clientPart = meta?.client ? `client=${cyan(String(meta.client))}` : undefined;
+    const clientPart = meta?.["client"]
+      ? `client=${cyan(String(meta["client"]))}`
+      : undefined;
 
     const metaStr = clientPart ? dim(clientPart) : "";
 

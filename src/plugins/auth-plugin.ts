@@ -13,7 +13,8 @@ export const authPlugin = createApp()
         method: request.method,
         path: new URL(request.url).pathname,
         client:
-          request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip"),
+          request.headers.get("x-forwarded-for") ??
+          request.headers.get("x-real-ip"),
       });
       throw new UnauthorizedHttpError("X-API-Key header is required");
     }

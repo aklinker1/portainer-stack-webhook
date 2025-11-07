@@ -15,7 +15,9 @@ export const app = createApp({
     },
   },
 })
-  .onGlobalError(({ error }) => logger.error("global.error", { error: String(error) }))
+  .onGlobalError(({ error }) =>
+    logger.error("global.error", { error: String(error) }),
+  )
   .use(healthApp)
   .use(stacksApp)
   .use(webhooksApp);

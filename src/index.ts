@@ -3,7 +3,10 @@ import { app } from "./app";
 import { env, logEnvWarnings } from "./env";
 import { logger } from "./utils/logger";
 
-logger.info("startup", { message: "Portainer Stack Webhooks starting", version });
+logger.info("startup", {
+  message: "Portainer Stack Webhooks starting",
+  version,
+});
 
 app.listen(env.port, () => {
   logEnvWarnings();

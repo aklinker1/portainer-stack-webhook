@@ -71,7 +71,9 @@ describe("App Integration Tests", async () => {
     ];
 
     const sendRequest = async (apiKey: string | null = API_KEY) => {
-      const headers: Record<string, string> = { "X-Forwarded-For": "203.0.113.5" };
+      const headers: Record<string, string> = {
+        "X-Forwarded-For": "203.0.113.5",
+      };
       if (apiKey) headers["X-API-Key"] = apiKey;
       return fetch(
         new Request(`http://localhost/api/stacks`, {
@@ -136,7 +138,9 @@ describe("App Integration Tests", async () => {
     const stackFileContent = "<docker compose code>";
 
     const sendRequest = async (apiKey: string | null = API_KEY) => {
-      const headers: Record<string, string> = { "X-Forwarded-For": "203.0.113.5" };
+      const headers: Record<string, string> = {
+        "X-Forwarded-For": "203.0.113.5",
+      };
       if (apiKey) headers["X-API-Key"] = apiKey;
       return fetch(
         new Request(`http://localhost/api/webhook/stacks/${stackId}`, {

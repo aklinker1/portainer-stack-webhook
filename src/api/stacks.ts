@@ -16,15 +16,12 @@ const listStacksHandler: any = withLogging(
   },
 );
 
-export const stacksApp = createApp()
-  .use(authPlugin)
-  .use(ctxPlugin)
-  .get(
-    "/api/stacks",
-    {
-      operationId: "listStacks",
-      summary: "List Stacks",
-      responses: ListStacksOutput,
-    },
-    listStacksHandler,
-  );
+export const stacksApp = createApp().use(authPlugin).use(ctxPlugin).get(
+  "/api/stacks",
+  {
+    operationId: "listStacks",
+    summary: "List Stacks",
+    responses: ListStacksOutput,
+  },
+  listStacksHandler,
+);
