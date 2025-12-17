@@ -131,7 +131,7 @@ describe("App Integration Tests", async () => {
     });
   });
 
-  describe("POST /api/webhook/stacks/{id}", () => {
+  describe("POST /api/webhook/stacks/id/{id}", () => {
     const stack = portainerStackFactory();
     const stackId = stack.Id;
     const endpointId = stack.EndpointId;
@@ -143,7 +143,7 @@ describe("App Integration Tests", async () => {
       };
       if (apiKey) headers["X-API-Key"] = apiKey;
       return fetch(
-        new Request(`http://localhost/api/webhook/stacks/${stackId}`, {
+        new Request(`http://localhost/api/webhook/stacks/id/${stackId}`, {
           method: "POST",
           headers,
         }),
@@ -167,6 +167,141 @@ describe("App Integration Tests", async () => {
         StackFileContent: stackFileContent,
       });
       portainer.updateStack.mockResolvedValue();
+    });
+
+    describe("when getStack throws an error", () => {
+      const err = Error("Not Found");
+
+      beforeEach(() => {
+        portainer.getStack.mockRejectedValue(err);
+      });
+
+      it("should fail", async () => {
+        const response = await sendRequest();
+
+        await expectErrorResponse(response, err);
+      });
+    });
+
+    describe("when getStackFile throws an error", () => {
+      const err = Error("Not Found");
+
+      beforeEach(() => {
+        portainer.getStackFile.mockRejectedValue(err);
+      });
+
+      it("should fail", async () => {
+        const response = await sendRequest();
+
+        await expectErrorResponse(response, err);
+      });
+    });
+
+    describe("when updateStack throws an error", () => {
+      const err = Error("Some error");
+
+      beforeEach(() => {
+        portainer.updateStack.mockRejectedValue(err);
+      });
+
+      it("should fail", async () => {
+        const response = await sendRequest();
+
+        await expectErrorResponse(response, err);
+      });
+    });
+
+    describe("when env.apiKey is set", () => {
+      describe("when no API key is provided", () => {
+        it("should fail", async () => {
+          const response = await sendRequest(null);
+
+          await expectUnauthorizedResponse(
+            response,
+            "X-API-Key header is required",
+          );
+        });
+      });
+
+      describe("when an invalid API key is provided", () => {
+        it("should fail", async () => {
+          const response = await sendRequest("not" + API_KEY);
+
+          await expectUnauthorizedResponse(response, "Invalid API key");
+        });
+      });
+    });
+
+    describe("when env.apiKey is not set", () => {
+      beforeEach(() => {
+        env.apiKey = undefined;
+      });
+
+      it("should update the stack, pulling the latest images", async () => {
+        const response = await sendRequest(null);
+
+        expectSuccess(response);
+      });
+    });
+
+    it("should update the stack, pulling the latest images", async () => {
+      const response = await sendRequest();
+
+      expectSuccess(response);
+    });
+  });
+
+  describe("POST /api/webhook/stacks/name/{name}", () => {
+    const stack = portainerStackFactory();
+    const stackName = stack.Name;
+    const stackId = stack.Id;
+    const endpointId = stack.EndpointId;
+    const stackFileContent = "<docker compose code>";
+
+    const sendRequest = async (apiKey: string | null = API_KEY) => {
+      const headers: Record<string, string> = {
+        "X-Forwarded-For": "203.0.113.5",
+      };
+      if (apiKey) headers["X-API-Key"] = apiKey;
+      return fetch(
+        new Request(`http://localhost/api/webhook/stacks/name/${stackName}`, {
+          method: "POST",
+          headers,
+        }),
+      );
+    };
+
+    const expectSuccess = (response: Response) => {
+      expect(response.status).toBe(HttpStatus.Accepted);
+      expect(portainer.updateStack).toBeCalledTimes(1);
+      expect(portainer.updateStack).toBeCalledWith(stackId, {
+        endpointId,
+        stackFileContent,
+        prune: false,
+        pullImage: true,
+      });
+    };
+
+    beforeEach(() => {
+      portainer.listStacks.mockResolvedValue([stack]);
+      portainer.getStack.mockResolvedValue(stack);
+      portainer.getStackFile.mockResolvedValue({
+        StackFileContent: stackFileContent,
+      });
+      portainer.updateStack.mockResolvedValue();
+    });
+
+    it("should fail if no stack exists with the provided name", async () => {
+      portainer.listStacks.mockResolvedValue([]);
+
+      const response = await sendRequest();
+
+      await expectErrorResponse(
+        response,
+        new Error(`Stack not found: ${stackName}`),
+      );
+      expect(portainer.getStack).not.toBeCalled();
+      expect(portainer.updateStack).not.toBeCalled();
     });
 
     describe("when getStack throws an error", () => {

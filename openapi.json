@@ -43,10 +43,10 @@
         }
       }
     },
-    "/api/webhook/stacks/{stackId}": {
+    "/api/webhook/stacks/id/{stackId}": {
       "post": {
-        "operationId": "updateStackWebhook",
-        "summary": "Update Stack Webhook",
+        "operationId": "updateStackWebhookById",
+        "summary": "Update Stack Webhook by ID",
         "parameters": [
           {
             "name": "stackId",
@@ -55,6 +55,37 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 9007199254740991
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/webhook/stacks/name/{stackName}": {
+      "post": {
+        "operationId": "updateStackWebhookByName",
+        "summary": "Update Stack Webhook by Name",
+        "parameters": [
+          {
+            "name": "stackName",
+            "in": "path",
+            "schema": {
+              "type": "string"
             },
             "required": true
           }

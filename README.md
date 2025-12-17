@@ -20,19 +20,60 @@ services:
       API_KEY: your-api-key                                 # Optional, set to a any string to require authentication
 ```
 
-To tell Portainer to pull the latest images and update the stack, make a simple POST request:
+For available endpoints, see the API Reference below or open `/scalar`. You can also copy-paste [`./openapi.json`](./openapi.json) into [Scalar Editor](https://editor.scalar.com/).
+
+## API Reference
+
+- Base URL: `http://localhost:3000`
+- Authentication: if `API_KEY` is set, add header `X-API-Key: <your-api-key>` to every request.
+
+### Health
+
+Check server status, uptime, and version.
 
 ```sh
-# No authentication
-curl -X POST http://localhost:3000/api/webhook/stacks/:stackId
+# no auth
+curl http://localhost:3000/api/health
 
-# With an API key
-curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/:stackId
+# with auth
+curl -H "X-API-Key: <your-api-key>" http://localhost:3000/api/health
 ```
 
-You can get the `stackId` from the `GET /api/stacks` endpoint.
+### List stacks
 
-For other available APIs, see `/scalar` or copy-paste [`./openapi.json`](./openapi.json) into [Scalar Editor](https://editor.scalar.com/)
+Returns `id` and `name` for each stack (useful for selecting `stackId` or `stackName`).
+
+```sh
+# no auth
+curl http://localhost:3000/api/stacks
+
+# with auth
+curl -H "X-API-Key: <your-api-key>" http://localhost:3000/api/stacks
+```
+
+### Update stack by ID
+
+Pull latest images and redeploy a stack by numeric ID.
+
+```sh
+# no auth
+curl -X POST http://localhost:3000/api/webhook/stacks/id/:stackId
+
+# with auth
+curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/id/:stackId
+```
+
+### Update stack by name
+
+Pull latest images and redeploy a stack by name.
+
+```sh
+# no auth
+curl -X POST http://localhost:3000/api/webhook/stacks/name/:stackName
+
+# with auth
+curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/name/:stackName
+```
 
 ## Contributing
 
@@ -54,10 +95,7 @@ To run:
    ```sh
    bun dev
    ```
-3. Send a request to test it out
-   ```sh
-   curl -X POST http://localhost:3000/api/webhook/stacks/123
-   ```
+3. Send a request to test it out (see API Reference above for routes)
 
 To run tests:
 
