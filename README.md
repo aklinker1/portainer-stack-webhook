@@ -14,8 +14,10 @@ services:
       - 3000:3000
     environment:
       PORTAINER_API_URL: https://portainer.example.com/api  # Required, full URL including /api
-      PORTAINER_USERNAME: your-username                     # Required, username to login with
-      PORTAINER_PASSWORD: your-password                     # Required, password to login with
+      PORTAINER_ACCESS_TOKEN: your-access-token             # Preferred, Portainer access token
+      # Legacy (falls back to username/password if no token is provided):
+      # PORTAINER_USERNAME: your-username                   # Username to login with
+      # PORTAINER_PASSWORD: your-password                   # Password to login with
       PORT: 3000                                            # Optional, default 3000
       API_KEY: your-api-key                                 # Optional, set to a any string to require authentication
 ```

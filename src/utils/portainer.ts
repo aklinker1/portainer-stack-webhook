@@ -11,7 +11,7 @@ export interface PortainerApi {
 }
 
 export function createPortainerApi(): PortainerApi {
-  const { apiUrl, username, password } = env.portainer;
+  const { apiUrl, accessToken, username, password } = env.portainer;
 
   const checkResponse = async (response: Response, expectedStatus = 200) => {
     if (response.status !== expectedStatus)
@@ -25,6 +25,12 @@ export function createPortainerApi(): PortainerApi {
   const jwt = createTtlValue<string>(60 * 60e3); // 1 hour (experimentally, it seems portainer JWTs last 8 hours)
 
   const login = async (): Promise<PortainerLoginResponse> => {
+    if (!username || !password) {
+      throw new InternalServerErrorHttpError(
+        "Portainer username/password are not configured",
+      );
+    }
+
     logger.info("portainer.jwt.fetch", {
       message: "Fetching new JWT for portainer...",
     });
@@ -45,12 +51,19 @@ export function createPortainerApi(): PortainerApi {
     return json;
   };
 
-  const getAuthHeaders = async () => {
-    const value = jwt.getValue() || (await login().then((res) => res.jwt));
-    return {
-      Authorization: `Bearer ${value}`,
-    };
+  const getToken = async (): Promise<string> => {
+    if (accessToken) return accessToken;
+
+    const value = jwt.getValue();
+    if (value) return value;
+
+    const { jwt: freshJwt } = await login();
+    return freshJwt;
   };
+
+  const getAuthHeaders = async () => ({
+    Authorization: `Bearer ${await getToken()}`,
+  });
 
   const listStacks: PortainerApi["listStacks"] = async () => {
     const res = await fetch(`${apiUrl}/stacks`, {
