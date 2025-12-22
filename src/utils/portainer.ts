@@ -84,7 +84,9 @@ export function createPortainerApi(): PortainerApi {
   };
 
   const getAuthHeaders = async () => ({
-    Authorization: `Bearer ${await getToken()}`,
+    ...(accessToken?.startsWith("ptr_")
+      ? { "X-API-Key": accessToken }
+      : { Authorization: `Bearer ${await getToken()}` }),
   });
 
   const listStacks: PortainerApi["listStacks"] = async () => {
