@@ -2,6 +2,7 @@ import { HttpStatus, createApp } from "@aklinker1/zeta";
 import {
   UpdateStackWebhookByIdInput,
   UpdateStackWebhookByNameInput,
+  UpdateStackWebhookByNameQuery,
   UpdateStackWebhookOutput,
 } from "../models";
 import { authPlugin } from "../plugins/auth-plugin";
@@ -22,6 +23,32 @@ const updateStackById = async (
     endpointId: stack.EndpointId,
     stackFileContent: stackFile.StackFileContent,
   });
+};
+
+const findStackByName = (
+  stacks: any[],
+  stackName: string,
+  endpointId?: number,
+) => {
+  const matches = stacks.filter((s: any) => s.Name === stackName);
+  if (matches.length === 0)
+    throw new Error(`Stack not found: ${stackName}`);
+
+  if (endpointId !== undefined) {
+    const match = matches.find((s: any) => s.EndpointId === endpointId);
+    if (!match)
+      throw new Error(
+        `Stack not found: ${stackName} on endpoint ${endpointId}`,
+      );
+    return match;
+  }
+
+  if (matches.length > 1)
+    throw new Error(
+      `Multiple stacks found with name ${stackName}; provide endpointId or use stack ID`,
+    );
+
+  return matches[0];
 };
 
 export const webhooksApp = createApp()
@@ -51,19 +78,20 @@ export const webhooksApp = createApp()
       operationId: "updateStackWebhookByName",
       summary: "Update Stack Webhook by Name",
       params: UpdateStackWebhookByNameInput,
+      query: UpdateStackWebhookByNameQuery,
       responses: {
         [HttpStatus.Accepted]: UpdateStackWebhookOutput,
       },
     },
     withLogging(
       "POST /api/webhook/stacks/name/:stackName",
-      async ({ params, portainer, status }: any) => {
+      async ({ params, query, portainer, status }: any) => {
         const stacks = await portainer.listStacks();
-        const stackSummary = stacks.find(
-          (s: any) => s.Name === params.stackName,
+        const stackSummary = findStackByName(
+          stacks,
+          params.stackName,
+          query?.endpointId,
         );
-        if (!stackSummary)
-          throw new Error(`Stack not found: ${params.stackName}`);
 
         await updateStackById(stackSummary.Id, portainer);
         return status(HttpStatus.Accepted, undefined);

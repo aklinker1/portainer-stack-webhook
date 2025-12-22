@@ -66,8 +66,16 @@ describe("App Integration Tests", async () => {
       portainerStackFactory(),
     ];
     const expected: ListStacksOutput = [
-      { id: stacks[0]!.Id, name: stacks[0]!.Name },
-      { id: stacks[1]!.Id, name: stacks[1]!.Name },
+      {
+        id: stacks[0]!.Id,
+        name: stacks[0]!.Name,
+        endpointId: stacks[0]!.EndpointId,
+      },
+      {
+        id: stacks[1]!.Id,
+        name: stacks[1]!.Name,
+        endpointId: stacks[1]!.EndpointId,
+      },
     ];
 
     const sendRequest = async (apiKey: string | null = API_KEY) => {
@@ -150,11 +158,14 @@ describe("App Integration Tests", async () => {
       );
     };
 
-    const expectSuccess = (response: Response) => {
+    const expectSuccess = (
+      response: Response,
+      expectedStack: PortainerStack = stack,
+    ) => {
       expect(response.status).toBe(HttpStatus.Accepted);
       expect(portainer.updateStack).toBeCalledTimes(1);
-      expect(portainer.updateStack).toBeCalledWith(stackId, {
-        endpointId,
+      expect(portainer.updateStack).toBeCalledWith(expectedStack.Id, {
+        endpointId: expectedStack.EndpointId,
         stackFileContent,
         prune: false,
         pullImage: true,
@@ -258,24 +269,35 @@ describe("App Integration Tests", async () => {
     const endpointId = stack.EndpointId;
     const stackFileContent = "<docker compose code>";
 
-    const sendRequest = async (apiKey: string | null = API_KEY) => {
+    const sendRequest = async (
+      apiKey: string | null = API_KEY,
+      endpointId?: number,
+    ) => {
       const headers: Record<string, string> = {
         "X-Forwarded-For": "203.0.113.5",
       };
       if (apiKey) headers["X-API-Key"] = apiKey;
+      const url = new URL(
+        `http://localhost/api/webhook/stacks/name/${stackName}`,
+      );
+      if (endpointId !== undefined)
+        url.searchParams.set("endpointId", String(endpointId));
       return fetch(
-        new Request(`http://localhost/api/webhook/stacks/name/${stackName}`, {
+        new Request(url, {
           method: "POST",
           headers,
         }),
       );
     };
 
-    const expectSuccess = (response: Response) => {
+    const expectSuccess = (
+      response: Response,
+      expectedStack: PortainerStack = stack,
+    ) => {
       expect(response.status).toBe(HttpStatus.Accepted);
       expect(portainer.updateStack).toBeCalledTimes(1);
-      expect(portainer.updateStack).toBeCalledWith(stackId, {
-        endpointId,
+      expect(portainer.updateStack).toBeCalledWith(expectedStack.Id, {
+        endpointId: expectedStack.EndpointId,
         stackFileContent,
         prune: false,
         pullImage: true,
@@ -299,6 +321,38 @@ describe("App Integration Tests", async () => {
       await expectErrorResponse(
         response,
         new Error(`Stack not found: ${stackName}`),
+      );
+      expect(portainer.getStack).not.toBeCalled();
+      expect(portainer.updateStack).not.toBeCalled();
+    });
+
+    it("should fail when multiple stacks share the name but no endpoint is provided", async () => {
+      const otherStack = portainerStackFactory({
+        Name: stackName,
+        EndpointId: stack.EndpointId + 1,
+      });
+      portainer.listStacks.mockResolvedValue([stack, otherStack]);
+
+      const response = await sendRequest();
+
+      await expectErrorResponse(
+        response,
+        new Error(
+          `Multiple stacks found with name ${stackName}; provide endpointId or use stack ID`,
+        ),
+      );
+      expect(portainer.getStack).not.toBeCalled();
+      expect(portainer.updateStack).not.toBeCalled();
+    });
+
+    it("should fail when the endpointId does not match a stack with the provided name", async () => {
+      portainer.listStacks.mockResolvedValue([stack]);
+
+      const response = await sendRequest(API_KEY, stack.EndpointId + 100);
+
+      await expectErrorResponse(
+        response,
+        new Error(`Stack not found: ${stackName} on endpoint ${stack.EndpointId + 100}`),
       );
       expect(portainer.getStack).not.toBeCalled();
       expect(portainer.updateStack).not.toBeCalled();
@@ -383,6 +437,23 @@ describe("App Integration Tests", async () => {
       const response = await sendRequest();
 
       expectSuccess(response);
+    });
+
+    it("should update the stack matching the provided endpointId when names collide", async () => {
+      const targetStack = portainerStackFactory({
+        Name: stackName,
+        EndpointId: stack.EndpointId + 10,
+      });
+      const otherStack = portainerStackFactory({
+        Name: stackName,
+        EndpointId: stack.EndpointId + 20,
+      });
+      portainer.listStacks.mockResolvedValue([otherStack, targetStack]);
+      portainer.getStack.mockResolvedValue(targetStack);
+
+      const response = await sendRequest(API_KEY, targetStack.EndpointId);
+
+      expectSuccess(response, targetStack);
     });
   });
 });

@@ -43,7 +43,7 @@ curl -H "X-API-Key: <your-api-key>" http://localhost:3000/api/health
 
 ### List stacks
 
-Returns `id` and `name` for each stack (useful for selecting `stackId` or `stackName`).
+Returns `id`, `name`, and `endpointId` for each stack (useful for selecting `stackId` or `stackName` and disambiguating identical stack names across environments).
 
 ```sh
 # no auth
@@ -71,10 +71,12 @@ Pull latest images and redeploy a stack by name.
 
 ```sh
 # no auth
-curl -X POST http://localhost:3000/api/webhook/stacks/name/:stackName
+curl -X POST "http://localhost:3000/api/webhook/stacks/name/:stackName?endpointId=:endpointId"
 
 # with auth
-curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/name/:stackName
+curl -X POST -H "X-API-Key: <your-api-key>" "http://localhost:3000/api/webhook/stacks/name/:stackName?endpointId=:endpointId"
+
+> `endpointId` is optional unless multiple stacks share the same name across environments; provide it to target the correct stack.
 ```
 
 ## Contributing

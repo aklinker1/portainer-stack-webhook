@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Portainer Stack Webhook",
-    "version": "0.2.3"
+    "version": "0.2.5"
   },
   "paths": {
     "/api/health": {
@@ -88,6 +88,16 @@
               "type": "string"
             },
             "required": true
+          },
+          {
+            "name": "endpointId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "required": false
           }
         ],
         "responses": {
@@ -174,11 +184,17 @@
           },
           "name": {
             "type": "string"
+          },
+          "endpointId": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "endpointId"
         ],
         "additionalProperties": false
       },

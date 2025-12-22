@@ -5,6 +5,7 @@ export const Stack = z
   .object({
     id: z.int(),
     name: z.string(),
+    endpointId: z.int(),
   })
   .meta({
     ref: "Stack",
@@ -48,6 +49,17 @@ export const UpdateStackWebhookByNameInput = z
   });
 export type UpdateStackWebhookByNameInput = z.infer<
   typeof UpdateStackWebhookByNameInput
+>;
+
+export const UpdateStackWebhookByNameQuery = z
+  .object({
+    endpointId: z.coerce.number().int().min(0).optional(),
+  })
+  .meta({
+    ref: "UpdateStackWebhookByNameQuery",
+  });
+export type UpdateStackWebhookByNameQuery = z.infer<
+  typeof UpdateStackWebhookByNameQuery
 >;
 
 export const UpdateStackWebhookOutput = NoResponse.meta({

@@ -12,6 +12,7 @@ const listStacksHandler: any = withLogging(
     return stacks.map((stack: any) => ({
       id: stack.Id,
       name: stack.Name,
+      endpointId: stack.EndpointId,
     }));
   },
 );
