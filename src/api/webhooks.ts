@@ -7,6 +7,7 @@ import {
 } from "../models";
 import { authPlugin } from "../plugins/auth-plugin";
 import { ctxPlugin } from "../plugins/ctx-plugin";
+import { logger } from "../utils/logger";
 import { withLogging } from "../utils/with-logging";
 
 const updateStackById = async (
@@ -66,7 +67,13 @@ export const webhooksApp = createApp()
     withLogging(
       "POST /api/webhook/stacks/id/:stackId",
       async ({ params, portainer, status }: any) => {
-        await updateStackById(params.stackId, portainer);
+        void updateStackById(params.stackId, portainer).catch((error) => {
+          logger.error("webhook.update_failed", {
+            route: "POST /api/webhook/stacks/id/:stackId",
+            stackId: params.stackId,
+            error: String(error),
+          });
+        });
         return status(HttpStatus.Accepted, undefined);
       },
     ) as any,
@@ -92,7 +99,15 @@ export const webhooksApp = createApp()
           query?.endpointId,
         );
 
-        await updateStackById(stackSummary.Id, portainer);
+        void updateStackById(stackSummary.Id, portainer).catch((error) => {
+          logger.error("webhook.update_failed", {
+            route: "POST /api/webhook/stacks/name/:stackName",
+            stackId: stackSummary.Id,
+            stackName: params.stackName,
+            endpointId: stackSummary.EndpointId,
+            error: String(error),
+          });
+        });
         return status(HttpStatus.Accepted, undefined);
       },
     ) as any,
