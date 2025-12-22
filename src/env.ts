@@ -1,35 +1,74 @@
-import { violet, bold, cyan, red, yellow } from "./colors";
+import { violet, bold, red } from "./colors";
+import { logger } from "./utils/logger";
+
+function fatalEnv(message: string): never {
+  logger.error("env.missing", { message });
+  // keep the old visual warning too for very early startup clarity
+  console.log(`${red(bold("⚠ Fatal"))}: ${message}`);
+  process.exit(1);
+}
+
+function readEnv(key: string): string | undefined {
+  const raw = process.env[key];
+  if (!raw) return undefined;
+  const value = raw.trim();
+  return value === "" ? undefined : value;
+}
 
 function requireEnv(key: string): string {
-  const value = process.env[key];
-  if (!value) {
-    console.log(
-      `${red(bold("⚠ Fatal"))}: The ${violet(key)} env var is required`,
-    );
-    process.exit(1);
-  }
+  const value = readEnv(key);
+  if (!value) fatalEnv(`The ${violet(key)} env var is required`);
   return value;
+}
+
+const baseUrl = readEnv("BASE_URL");
+const portainerApiUrl = baseUrl || requireEnv("PORTAINER_API_URL");
+const portainerAccessToken = readEnv("PORTAINER_ACCESS_TOKEN");
+const portainerUsername = readEnv("USERNAME") || readEnv("PORTAINER_USERNAME");
+const portainerPassword = readEnv("PASSWORD") || readEnv("PORTAINER_PASSWORD");
+
+if (!portainerAccessToken && (!portainerUsername || !portainerPassword)) {
+  fatalEnv(
+    "Set PORTAINER_ACCESS_TOKEN or both PORTAINER_USERNAME and PORTAINER_PASSWORD",
+  );
 }
 
 export const env = {
   port: Number(process.env.PORT || 3000),
   portainer: {
-    apiUrl: process.env.BASE_URL || requireEnv("PORTAINER_API_URL"),
-    username: process.env.USERNAME || requireEnv("PORTAINER_USERNAME"),
-    password: process.env.PASSWORD || requireEnv("PORTAINER_PASSWORD"),
+    apiUrl: portainerApiUrl,
+    accessToken: portainerAccessToken,
+    username: portainerUsername,
+    password: portainerPassword,
   },
   apiKey: process.env.API_KEY || undefined,
 };
 
 export function logEnvWarnings() {
   if (env.apiKey) {
-    console.log(
-      `${cyan(bold("ℹ"))} ${violet("API_KEY")} set - endpoints are protected`,
-    );
+    logger.info("env.api_key", {
+      message: "API_KEY set - endpoints are protected",
+    });
   } else {
-    console.log(
-      `${cyan(bold("ℹ"))} ${violet("API_KEY")} not set - endpoints are not protected`,
-    );
+    logger.info("env.api_key", {
+      message: "API_KEY not set - endpoints are not protected",
+    });
+  }
+
+  if (env.portainer.accessToken) {
+    logger.info("env.portainer_auth", {
+      message: "Using PORTAINER_ACCESS_TOKEN; username/password not required",
+    });
+    if (env.portainer.username || env.portainer.password) {
+      logger.warn("env.portainer_auth", {
+        message:
+          "PORTAINER_USERNAME or PORTAINER_PASSWORD set but ignored because PORTAINER_ACCESS_TOKEN is configured",
+      });
+    }
+  } else {
+    logger.info("env.portainer_auth", {
+      message: "Using PORTAINER_USERNAME and PORTAINER_PASSWORD",
+    });
   }
 
   maybeLogDeprecated("BASE_URL", "PORTAINER_API_URL");
@@ -39,8 +78,8 @@ export function logEnvWarnings() {
 
 function maybeLogDeprecated(key: string, replacement: string): void {
   if (process.env[key]) {
-    console.log(
-      `${yellow(bold("⚠"))} ${violet(key)} is deprecated, use ${violet(replacement)} instead`,
-    );
+    logger.warn("env.deprecated", {
+      message: `${key} is deprecated, use ${replacement} instead`,
+    });
   }
 }

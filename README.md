@@ -14,25 +14,70 @@ services:
       - 3000:3000
     environment:
       PORTAINER_API_URL: https://portainer.example.com/api  # Required, full URL including /api
-      PORTAINER_USERNAME: your-username                     # Required, username to login with
-      PORTAINER_PASSWORD: your-password                     # Required, password to login with
+      PORTAINER_ACCESS_TOKEN: your-access-token             # Preferred, Portainer access token
+      # Legacy (falls back to username/password if no token is provided):
+      # PORTAINER_USERNAME: your-username                   # Username to login with
+      # PORTAINER_PASSWORD: your-password                   # Password to login with
       PORT: 3000                                            # Optional, default 3000
       API_KEY: your-api-key                                 # Optional, set to a any string to require authentication
 ```
 
-To tell Portainer to pull the latest images and update the stack, make a simple POST request:
+For available endpoints, see the API Reference below or open `/scalar`. You can also copy-paste [`./openapi.json`](./openapi.json) into [Scalar Editor](https://editor.scalar.com/).
+
+## API Reference
+
+- Base URL: `http://localhost:3000`
+- Authentication: if `API_KEY` is set, add header `X-API-Key: <your-api-key>` to every request.
+
+### Health
+
+Check server status, uptime, and version.
 
 ```sh
-# No authentication
-curl -X POST http://localhost:3000/api/webhook/stacks/:stackId
+# no auth
+curl http://localhost:3000/api/health
 
-# With an API key
-curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/:stackId
+# with auth
+curl -H "X-API-Key: <your-api-key>" http://localhost:3000/api/health
 ```
 
-You can get the `stackId` from the `GET /api/stacks` endpoint.
+### List stacks
 
-For other available APIs, see `/scalar` or copy-paste [`./openapi.json`](./openapi.json) into [Scalar Editor](https://editor.scalar.com/)
+Returns `id`, `name`, and `endpointId` for each stack (useful for selecting `stackId` or `stackName` and disambiguating identical stack names across environments).
+
+```sh
+# no auth
+curl http://localhost:3000/api/stacks
+
+# with auth
+curl -H "X-API-Key: <your-api-key>" http://localhost:3000/api/stacks
+```
+
+### Update stack by ID
+
+Pull latest images and redeploy a stack by numeric ID.
+
+```sh
+# no auth
+curl -X POST http://localhost:3000/api/webhook/stacks/id/:stackId
+
+# with auth
+curl -X POST -H "X-API-Key: <your-api-key>" http://localhost:3000/api/webhook/stacks/id/:stackId
+```
+
+### Update stack by name
+
+Pull latest images and redeploy a stack by name.
+
+```sh
+# no auth
+curl -X POST "http://localhost:3000/api/webhook/stacks/name/:stackName?endpointId=:endpointId"
+
+# with auth
+curl -X POST -H "X-API-Key: <your-api-key>" "http://localhost:3000/api/webhook/stacks/name/:stackName?endpointId=:endpointId"
+
+> `endpointId` is optional unless multiple stacks share the same name across environments; provide it to target the correct stack.
+```
 
 ## Contributing
 
@@ -54,10 +99,7 @@ To run:
    ```sh
    bun dev
    ```
-3. Send a request to test it out
-   ```sh
-   curl -X POST http://localhost:3000/api/webhook/stacks/123
-   ```
+3. Send a request to test it out (see API Reference above for routes)
 
 To run tests:
 

@@ -5,6 +5,7 @@ export const Stack = z
   .object({
     id: z.int(),
     name: z.string(),
+    endpointId: z.int(),
   })
   .meta({
     ref: "Stack",
@@ -28,14 +29,38 @@ export const GetHealthOutput = z
   });
 export type GetHealthOutput = z.infer<typeof GetHealthOutput>;
 
-export const UpdateStackWebhookInput = z
+export const UpdateStackWebhookByIdInput = z
   .object({
     stackId: z.coerce.number().int().min(0),
   })
   .meta({
-    ref: "UpdateStackWebhookInput",
+    ref: "UpdateStackWebhookByIdInput",
   });
-export type UpdateStackWebhookInput = z.infer<typeof UpdateStackWebhookInput>;
+export type UpdateStackWebhookByIdInput = z.infer<
+  typeof UpdateStackWebhookByIdInput
+>;
+
+export const UpdateStackWebhookByNameInput = z
+  .object({
+    stackName: z.string().trim().min(1),
+  })
+  .meta({
+    ref: "UpdateStackWebhookByNameInput",
+  });
+export type UpdateStackWebhookByNameInput = z.infer<
+  typeof UpdateStackWebhookByNameInput
+>;
+
+export const UpdateStackWebhookByNameQuery = z
+  .object({
+    endpointId: z.coerce.number().int().min(0).optional(),
+  })
+  .meta({
+    ref: "UpdateStackWebhookByNameQuery",
+  });
+export type UpdateStackWebhookByNameQuery = z.infer<
+  typeof UpdateStackWebhookByNameQuery
+>;
 
 export const UpdateStackWebhookOutput = NoResponse.meta({
   responseDescription: "Stack update submitted",
