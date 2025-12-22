@@ -13,12 +13,33 @@ export interface PortainerApi {
 export function createPortainerApi(): PortainerApi {
   const { apiUrl, accessToken, username, password } = env.portainer;
 
-  const checkResponse = async (response: Response, expectedStatus = 200) => {
+  const fetchPortainer = async (url: string, init?: RequestInit) => {
+    try {
+      return await fetch(url, init);
+    } catch (err) {
+      logger.error("portainer.fetch_failed", {
+        url,
+        method: init?.method ?? "GET",
+        error: String(err),
+      });
+      throw new InternalServerErrorHttpError(
+        `Unable to connect to Portainer at ${url}`,
+        { cause: err },
+      );
+    }
+  };
+
+  const checkResponse = async (
+    response: Response,
+    expectedStatus = 200,
+    url?: string,
+  ) => {
     if (response.status !== expectedStatus)
       throw new PortainerApiError(
         expectedStatus,
         response,
         await response.text(),
+        url,
       );
   };
 
@@ -35,7 +56,8 @@ export function createPortainerApi(): PortainerApi {
       message: "Fetching new JWT for portainer...",
     });
 
-    const res = await fetch(`${apiUrl}/auth`, {
+    const url = `${apiUrl}/auth`;
+    const res = await fetchPortainer(url, {
       body: JSON.stringify({ username, password }),
       method: "POST",
       headers: {
@@ -43,7 +65,7 @@ export function createPortainerApi(): PortainerApi {
       },
     });
 
-    await checkResponse(res);
+    await checkResponse(res, 200, url);
 
     const json = (await res.json()) as PortainerLoginResponse;
     jwt.setValue(json.jwt);
@@ -66,29 +88,32 @@ export function createPortainerApi(): PortainerApi {
   });
 
   const listStacks: PortainerApi["listStacks"] = async () => {
-    const res = await fetch(`${apiUrl}/stacks`, {
+    const url = `${apiUrl}/stacks`;
+    const res = await fetchPortainer(url, {
       headers: await getAuthHeaders(),
     });
 
-    await checkResponse(res);
+    await checkResponse(res, 200, url);
     return (await res.json()) as any;
   };
 
   const getStack: PortainerApi["getStack"] = async (id) => {
-    const res = await fetch(`${apiUrl}/stacks/${id}`, {
+    const url = `${apiUrl}/stacks/${id}`;
+    const res = await fetchPortainer(url, {
       headers: await getAuthHeaders(),
     });
 
-    await checkResponse(res);
+    await checkResponse(res, 200, url);
     return (await res.json()) as any;
   };
 
   const getStackFile: PortainerApi["getStackFile"] = async (id) => {
-    const res = await fetch(`${apiUrl}/stacks/${id}/file`, {
+    const url = `${apiUrl}/stacks/${id}/file`;
+    const res = await fetchPortainer(url, {
       headers: await getAuthHeaders(),
     });
 
-    await checkResponse(res);
+    await checkResponse(res, 200, url);
     return (await res.json()) as any;
   };
 
@@ -99,7 +124,7 @@ export function createPortainerApi(): PortainerApi {
     const updateUrl = new URL(`${apiUrl}/stacks/${id}`);
     updateUrl.searchParams.set("endpointId", String(options.endpointId));
 
-    const res = await fetch(updateUrl.href, {
+    const res = await fetchPortainer(updateUrl.href, {
       method: "PUT",
       body: JSON.stringify({
         prune: options.prune,
@@ -112,7 +137,7 @@ export function createPortainerApi(): PortainerApi {
       },
     });
 
-    await checkResponse(res);
+    await checkResponse(res, 200, updateUrl.href);
   };
 
   return {
@@ -149,11 +174,13 @@ export class PortainerApiError extends InternalServerErrorHttpError {
     expectedStatus: number,
     response: Response,
     readonly text: string,
+    readonly url?: string,
     options?: ErrorOptions,
   ) {
     super(
-      `Request to Portainer API failed. Expected status ${expectedStatus}, received ${response.status}`,
-      { response, text },
+      `Request to Portainer API failed. Expected status ${expectedStatus}, received ${response.status}` +
+        (url ? ` for ${url}` : ""),
+      { response, text, url },
       options,
     );
   }

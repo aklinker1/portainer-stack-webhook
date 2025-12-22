@@ -31,8 +31,7 @@ const findStackByName = (
   endpointId?: number,
 ) => {
   const matches = stacks.filter((s: any) => s.Name === stackName);
-  if (matches.length === 0)
-    throw new Error(`Stack not found: ${stackName}`);
+  if (matches.length === 0) throw new Error(`Stack not found: ${stackName}`);
 
   if (endpointId !== undefined) {
     const match = matches.find((s: any) => s.EndpointId === endpointId);

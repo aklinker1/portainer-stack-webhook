@@ -142,7 +142,6 @@ describe("App Integration Tests", async () => {
   describe("POST /api/webhook/stacks/id/{id}", () => {
     const stack = portainerStackFactory();
     const stackId = stack.Id;
-    const endpointId = stack.EndpointId;
     const stackFileContent = "<docker compose code>";
 
     const sendRequest = async (apiKey: string | null = API_KEY) => {
@@ -265,8 +264,6 @@ describe("App Integration Tests", async () => {
   describe("POST /api/webhook/stacks/name/{name}", () => {
     const stack = portainerStackFactory();
     const stackName = stack.Name;
-    const stackId = stack.Id;
-    const endpointId = stack.EndpointId;
     const stackFileContent = "<docker compose code>";
 
     const sendRequest = async (
@@ -352,7 +349,9 @@ describe("App Integration Tests", async () => {
 
       await expectErrorResponse(
         response,
-        new Error(`Stack not found: ${stackName} on endpoint ${stack.EndpointId + 100}`),
+        new Error(
+          `Stack not found: ${stackName} on endpoint ${stack.EndpointId + 100}`,
+        ),
       );
       expect(portainer.getStack).not.toBeCalled();
       expect(portainer.updateStack).not.toBeCalled();
