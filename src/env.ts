@@ -8,25 +8,30 @@ function fatalEnv(message: string): never {
   process.exit(1);
 }
 
+function readEnv(key: string): string | undefined {
+  const raw = process.env[key];
+  if (!raw) return undefined;
+  const value = raw.trim();
+  return value === "" ? undefined : value;
+}
+
 function requireEnv(key: string): string {
-  const value = process.env[key];
+  const value = readEnv(key);
   if (!value) fatalEnv(`The ${violet(key)} env var is required`);
   return value;
 }
 
-const portainerApiUrl =
-  process.env.BASE_URL || requireEnv("PORTAINER_API_URL");
-const portainerAccessToken = process.env.PORTAINER_ACCESS_TOKEN;
-const portainerUsername =
-  process.env.USERNAME || process.env.PORTAINER_USERNAME;
-const portainerPassword =
-  process.env.PASSWORD || process.env.PORTAINER_PASSWORD;
+const baseUrl = readEnv("BASE_URL");
+const portainerApiUrl = baseUrl || requireEnv("PORTAINER_API_URL");
+const portainerAccessToken = readEnv("PORTAINER_ACCESS_TOKEN");
+const portainerUsername = readEnv("USERNAME") || readEnv("PORTAINER_USERNAME");
+const portainerPassword = readEnv("PASSWORD") || readEnv("PORTAINER_PASSWORD");
 
-  if (!portainerAccessToken && (!portainerUsername || !portainerPassword)) {
-    fatalEnv(
-      "Set PORTAINER_ACCESS_TOKEN or both PORTAINER_USERNAME and PORTAINER_PASSWORD",
-    );
-  }
+if (!portainerAccessToken && (!portainerUsername || !portainerPassword)) {
+  fatalEnv(
+    "Set PORTAINER_ACCESS_TOKEN or both PORTAINER_USERNAME and PORTAINER_PASSWORD",
+  );
+}
 
 export const env = {
   port: Number(process.env.PORT || 3000),
