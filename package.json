@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@aklinker1/zero-factory": "^1.1.5",
-    "@aklinker1/zeta": "npm:@jsr/aklinker1__zeta@1.1.1",
+    "@aklinker1/zeta": "^2.1.2",
+    "dedent": "^1.7.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
