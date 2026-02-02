@@ -1,9 +1,10 @@
 import { createApp } from "@aklinker1/zeta";
-import { version } from "../package.json";
 import { zodSchemaAdapter } from "@aklinker1/zeta/adapters/zod-schema-adapter";
-import { healthApp } from "./api/health";
-import { stacksApp } from "./api/stacks";
-import { webhooksApp } from "./api/webhooks";
+import dedent from "dedent";
+import { version } from "../package.json";
+import { stackApis } from "./api/stack-apis";
+import { systemApis } from "./api/system-apis";
+import { webhookApis } from "./api/webhook-apis";
 
 export const app = createApp({
   schemaAdapter: zodSchemaAdapter,
@@ -35,6 +36,6 @@ export const app = createApp({
   },
 })
   .onGlobalError(({ error }) => console.error(error))
-  .use(healthApp)
-  .use(stacksApp)
-  .use(webhooksApp);
+  .use(systemApis)
+  .use(stackApis)
+  .use(webhookApis);

@@ -2,7 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Portainer Stack Webhook",
-    "version": "0.2.5"
+    "version": "0.2.5",
+    "description": "## Overview\n\nUse the [`Update Stack Webhook`](#POST/api/webhook/stacks/{stackId})\nendpoint to trigger portainer to pull the latest images for a stack and\nrestart.\n\nThis API provides some other endpoints for a health check and to list\nstacks present if you need help finding the stack ID to use.\n\n## Environment Variables\n\nConfigure how the application runs with environment variables:\n\n- `PORT` (_default: `3000`_) &ndash; Set to an integer to change the port the app is served over.\n- `PORTAINER_API_URL` (_required_) &ndash; The URL to your portainer instance's API endpoint, including the `/api` suffix.\n- `PORTAINER_USERNAME` (_required_) &ndash; Portainer username used to authenticate requests.\n- `PORTAINER_PASSWORD` (_required_) &ndash; Portainer password used to authenticate requests.\n- `API_KEY` (_optional_) &ndash; If defined, you must pass the defined API key in the `X-API-Key: <API_KEY>` header for all requests other than `/api/health`."
   },
   "paths": {
     "/api/health": {
@@ -16,7 +17,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetHealthOutput"
+                  "$ref": "#/components/schemas/ServerHealth"
                 }
               }
             }
@@ -35,7 +36,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListStacksOutput"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Stack"
+                  }
                 }
               }
             }
@@ -104,7 +108,7 @@
           "message"
         ]
       },
-      "GetHealthOutput": {
+      "ServerHealth": {
         "type": "object",
         "properties": {
           "status": {
@@ -132,12 +136,6 @@
           "version"
         ],
         "additionalProperties": false
-      },
-      "ListStacksOutput": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Stack"
-        }
       },
       "Stack": {
         "type": "object",

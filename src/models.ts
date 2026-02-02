@@ -1,5 +1,14 @@
-import { NoResponse } from "@aklinker1/zeta";
 import z from "zod";
+
+export const ServerHealth = z
+  .object({
+    status: z.string(),
+    uptime: z.int().min(0).describe("Uptime in seconds"),
+    since: z.iso.datetime(),
+    version: z.string(),
+  })
+  .meta({ ref: "ServerHealth" });
+export type ServerHealth = z.infer<typeof ServerHealth>;
 
 export const Stack = z
   .object({
@@ -11,33 +20,13 @@ export const Stack = z
   });
 export type Stack = z.infer<typeof Stack>;
 
-export const ListStacksOutput = Stack.array().meta({
-  ref: "ListStacksOutput",
-});
+export const ListStacksOutput = Stack.array();
 export type ListStacksOutput = z.infer<typeof ListStacksOutput>;
 
-export const GetHealthOutput = z
-  .object({
-    status: z.string(),
-    uptime: z.int().min(0).describe("Uptime in seconds"),
-    since: z.iso.datetime(),
-    version: z.string(),
-  })
-  .meta({
-    ref: "GetHealthOutput",
-  });
+export const GetHealthOutput = ServerHealth;
 export type GetHealthOutput = z.infer<typeof GetHealthOutput>;
 
-export const UpdateStackWebhookInput = z
-  .object({
-    stackId: z.coerce.number().int().min(0),
-  })
-  .meta({
-    ref: "UpdateStackWebhookInput",
-  });
-export type UpdateStackWebhookInput = z.infer<typeof UpdateStackWebhookInput>;
-
-export const UpdateStackWebhookOutput = NoResponse.meta({
-  responseDescription: "Stack update submitted",
+export const UpdateStackWebhookInput = z.object({
+  stackId: z.coerce.number().int().min(0),
 });
-export type UpdateStackWebhookOutput = void;
+export type UpdateStackWebhookInput = z.infer<typeof UpdateStackWebhookInput>;

@@ -1,19 +1,20 @@
-import { HttpStatus, createApp } from "@aklinker1/zeta";
-import { UpdateStackWebhookInput, UpdateStackWebhookOutput } from "../models";
+import { HttpStatus, NoResponse, createApp } from "@aklinker1/zeta";
+import { UpdateStackWebhookInput } from "../models";
 import { authPlugin } from "../plugins/auth-plugin";
 import { ctxPlugin } from "../plugins/ctx-plugin";
 
-export const webhooksApp = createApp()
+export const webhookApis = createApp()
   .use(authPlugin)
   .use(ctxPlugin)
   .post(
     "/api/webhook/stacks/:stackId",
     {
       operationId: "updateStackWebhook",
-      summary: "Update Stack Webhook",
       params: UpdateStackWebhookInput,
       responses: {
-        [HttpStatus.Accepted]: UpdateStackWebhookOutput,
+        [HttpStatus.Accepted]: NoResponse.meta({
+          responseDescription: "Stack update submitted",
+        }),
       },
     },
     async ({ params, portainer, status }) => {

@@ -4,11 +4,10 @@ import { version } from "../version";
 
 const since = new Date();
 
-export const healthApp = createApp().get(
+export const systemApis = createApp().get(
   "/api/health",
   {
     operationId: "getHealth",
-    summary: "Get Health",
     responses: GetHealthOutput,
   },
   () => ({
