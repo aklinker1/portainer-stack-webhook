@@ -1,11 +1,14 @@
-import { describe, it, expect, mock, beforeEach } from "bun:test";
-import { mockPortainer } from "../testing/mock-portainer";
 import { HttpStatus } from "@aklinker1/zeta";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { env } from "../env";
 import { ListStacksOutput } from "../models";
+import { portainerStackFactory } from "../testing/factories";
+import { mockPortainer } from "../testing/mock-portainer";
 import type { PortainerStack } from "../utils/portainer";
 import { version } from "../version";
-import { portainerStackFactory } from "../testing/factories";
-import { env } from "../env";
+
+// Silence logs
+console.error = () => {};
 
 mock.module("../env", () => ({
   env: {},
