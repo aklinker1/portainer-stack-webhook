@@ -1,7 +1,9 @@
 import { InternalServerErrorHttpError } from "@aklinker1/zeta";
 import { env } from "../env";
+import { createLogger } from "./logger";
 import { createTtlValue } from "./ttl-value";
-import { bold, cyan } from "../colors";
+
+const logger = createLogger("portainer");
 
 export interface PortainerApi {
   listStacks: () => Promise<PortainerStack[]>;
@@ -25,7 +27,7 @@ export function createPortainerApi(): PortainerApi {
   const jwt = createTtlValue<string>(60 * 60e3); // 1 hour (experimentally, it seems portainer JWTs last 8 hours)
 
   const login = async (): Promise<PortainerLoginResponse> => {
-    console.log(`${cyan(bold("ℹ"))} Fetching new JWT for portainer...`);
+    logger.debug(`Fetching new JWT...`);
 
     const res = await fetch(`${apiUrl}/auth`, {
       body: JSON.stringify({ username, password }),

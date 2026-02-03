@@ -18,6 +18,7 @@ services:
       PORTAINER_PASSWORD: your-password                     # Required, password to login with
       PORT: 3000                                            # Optional, default 3000
       API_KEY: your-api-key                                 # Optional, set to a any string to require authentication
+      LOG_LEVEL: json                                       # Optional, control the log format ("pretty" | "json")
 ```
 
 To tell Portainer to pull the latest images and update the stack, make a simple POST request:

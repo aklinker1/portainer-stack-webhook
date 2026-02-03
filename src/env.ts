@@ -1,14 +1,28 @@
-import { violet, bold, cyan, red, yellow } from "./colors";
+import { violet } from "./colors";
+import type { Logger } from "./utils/logger";
+
+export type LogFormat = "json" | "pretty";
 
 function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
-    console.log(
-      `${red(bold("⚠ Fatal"))}: The ${violet(key)} env var is required`,
-    );
+    console.error(`The ${violet(key)} env var is required`);
     process.exit(1);
   }
   return value;
+}
+
+function getLogFormat(): LogFormat {
+  const env =
+    process.env.LOG_FORMAT ??
+    (process.env.NODE_ENV === "production" ? "json" : "pretty");
+  if (!["json", "pretty"].includes(env)) {
+    console.error(
+      `The ${violet("LOG_FORMAT")} env var must be "pretty" or "json"`,
+    );
+    process.exit(1);
+  }
+  return env as LogFormat;
 }
 
 export const env = {
@@ -19,28 +33,29 @@ export const env = {
     password: process.env.PASSWORD || requireEnv("PORTAINER_PASSWORD"),
   },
   apiKey: process.env.API_KEY || undefined,
+  logFormat: getLogFormat(),
 };
 
-export function logEnvWarnings() {
+export function logEnvWarnings(logger: Logger) {
   if (env.apiKey) {
-    console.log(
-      `${cyan(bold("ℹ"))} ${violet("API_KEY")} set - endpoints are protected`,
-    );
+    logger.warn(`${violet("API_KEY")} set - endpoints are protected`);
   } else {
-    console.log(
-      `${cyan(bold("ℹ"))} ${violet("API_KEY")} not set - endpoints are not protected`,
-    );
+    logger.warn(`${violet("API_KEY")} not set - endpoints are not protected`);
   }
 
-  maybeLogDeprecated("BASE_URL", "PORTAINER_API_URL");
-  maybeLogDeprecated("USERNAME", "PORTAINER_USERNAME");
-  maybeLogDeprecated("PASSWORD", "PORTAINER_PASSWORD");
+  maybeLogDeprecated(logger, "BASE_URL", "PORTAINER_API_URL");
+  maybeLogDeprecated(logger, "USERNAME", "PORTAINER_USERNAME");
+  maybeLogDeprecated(logger, "PASSWORD", "PORTAINER_PASSWORD");
 }
 
-function maybeLogDeprecated(key: string, replacement: string): void {
+function maybeLogDeprecated(
+  logger: Logger,
+  key: string,
+  replacement: string,
+): void {
   if (process.env[key]) {
-    console.log(
-      `${yellow(bold("⚠"))} ${violet(key)} is deprecated, use ${violet(replacement)} instead`,
+    logger.warn(
+      `${violet(key)} is deprecated, use ${violet(replacement)} instead`,
     );
   }
 }

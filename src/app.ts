@@ -5,6 +5,7 @@ import { version } from "../package.json";
 import { stackApis } from "./api/stack-apis";
 import { systemApis } from "./api/system-apis";
 import { webhookApis } from "./api/webhook-apis";
+import { requestLoggerPlugin } from "./plugins/request-logger-plugin";
 
 export const app = createApp({
   schemaAdapter: zodSchemaAdapter,
@@ -31,11 +32,12 @@ export const app = createApp({
         - \`PORTAINER_USERNAME\` (_required_) &ndash; Portainer username used to authenticate requests.
         - \`PORTAINER_PASSWORD\` (_required_) &ndash; Portainer password used to authenticate requests.
         - \`API_KEY\` (_optional_) &ndash; If defined, you must pass the defined API key in the \`X-API-Key: <API_KEY>\` header for all requests other than \`/api/health\`.
+        - \`LOG_FORMAT\` (_optional_) &ndash; Control if logs are printed as "pretty" or "json". Defaults to "json" in production.
       `,
     },
   },
 })
-  .onGlobalError(({ error }) => console.error(error))
+  .use(requestLoggerPlugin)
   .use(systemApis)
   .use(stackApis)
   .use(webhookApis);

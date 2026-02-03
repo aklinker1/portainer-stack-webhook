@@ -1,16 +1,17 @@
-import { bold, cyan, dim, violet } from "./colors";
-import { version } from "./version";
 import { app } from "./app";
+import { bold, cyan, dim, violet } from "./colors";
 import { env, logEnvWarnings } from "./env";
+import { appLogger, createLogger } from "./utils/logger";
+import { version } from "./version";
 
-console.log(`${bold(cyan("Portainer Stack Webhooks"))} ${dim("v" + version)}`);
+appLogger.info(
+  `${bold(cyan("Portainer Stack Webhooks"))} ${dim("v" + version)}`,
+);
 
 app.listen(env.port, () => {
-  logEnvWarnings();
+  logEnvWarnings(createLogger("env"));
 
-  console.log(
-    `${cyan("ℹ")} Server started ${dim("→")} ${violet(
-      "http://localhost:" + env.port,
-    )}`,
+  appLogger.info(
+    `Server started ${dim("→")} ${violet("http://localhost:" + env.port)}`,
   );
 });
