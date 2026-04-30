@@ -5,7 +5,7 @@ An equivalent solution to Portainer BE's [Automatic Stack Updates](https://www.p
 
 > [!WARNING]
 >
-> If you're deploying stacks, you may want to use ["Service Webhooks"](https://docs.portainer.io/user/docker/services/webhooks) instead of the stack webhooks. They're hard to find by just poking around. I missed them, so I created this app to update my services, but I really needed were service webhooks, which are already free.
+> If you're deploying stacks, you may want to use ["Service Webhooks"](https://docs.portainer.io/user/docker/services/webhooks) instead of the stack webhooks. They're hard to find by just poking around. I missed them, so I created this app to update my services - but what I really needed were service webhooks, which are already free.
 >
 > So here's how to find them:
 > 1. Going to your stack
