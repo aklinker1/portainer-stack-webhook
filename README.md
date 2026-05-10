@@ -3,19 +3,6 @@
 
 An equivalent solution to Portainer BE's [Automatic Stack Updates](https://www.portainer.io/business-upsell?from=stack-webhook) feature, but free.
 
-> [!WARNING]
->
-> If you're deploying stacks, you may want to use ["Service Webhooks"](https://docs.portainer.io/user/docker/services/webhooks) instead of the stack webhooks. They're hard to find by just poking around. I missed them, so I created this app to update my services - but what I really needed were service webhooks, which are already free.
->
-> So here's how to find them:
-> 1. Going to your stack
-> 2. Clicking on the service you want to add a webhook for
-> 3. The service webhook is located in the "Service details" section
->
-> Service webhooks will work for you if your image uses the `:latest` tag or any other tag that you pushed a new version of the image to.
->
-> This app is only useful if you need to restart an entire stack.
-
 Just run the container, tell it how to access your portainer instance, and tada, it's done! :tada:
 
 <!-- prettier-ignore -->
